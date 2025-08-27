@@ -98,7 +98,11 @@ hping3 -1 10.0.1.x --rand-dest -I eth0
 -Find linux ssh server on 192.168.10.0/24:
 
 nmap -p 22 -A 192.168.10.0/24 --open
+-----------------------------------------------------------------------------------------------------------
+-Find arp or mac address cooomunicating with the linux:
 
+arp-scan -l
+arp -a
 -----------------------------------------------------------------------------------------------------------
 -SMB enumeartion and check if message signing feature is required or not:
 
@@ -117,6 +121,7 @@ smbclient -L //192.168.31.105 -k
 -----------------------------------------------------------------------------------------------------------
 -Identify attack category of the oldest CVEs that affects www.goodshoping.com:
 
+nmap --script vuln 192.168.10.101
 nmap -sV --script http-enum www.goodshoping.com (Identify Login Page)
 
 search on https://nvd.nist.gov/vuln/search#/nvd/home?resultType=records
@@ -1542,3 +1547,4 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
