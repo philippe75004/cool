@@ -1423,7 +1423,7 @@ Check ho many categories on the right have one or more vulnerabilities = 3
 1 for MIME type confusion
 
 -----------------------------------------------------------------------------------------------------------------------------------------
--Decrypt file crypto forge (on windows - right click - decrypt):
+-Decrypt file crypto forge (on windows - right click - decrypt): .cfe extensions
 
 (on windows cryptoforge - right click on the file - decrypt - enter password or press enter if no password)
 -----------------------------------------------------------------------------------------------------------------------------------------
@@ -1547,4 +1547,5 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
