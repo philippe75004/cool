@@ -122,7 +122,8 @@ smbclient -L //192.168.31.105 -k
 -Identify attack category of the oldest CVEs that affects www.goodshoping.com:
 
 nmap --script vuln 192.168.10.101
-nmap -sV --script http-enum www.goodshoping.com (Identify Login Page)
+nmap --script vuln --script-args mincvss=6.5
+nmap -sV --script vulners 192.168.31.105
 
 search on https://nvd.nist.gov/vuln/search#/nvd/home?resultType=records
 
@@ -1547,5 +1548,6 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
