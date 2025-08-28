@@ -632,7 +632,7 @@ available at 192.168.0.64. Locate the Flag.txt file and enter its content as the
 MD5 hash to reveal the original message. Enter the decrypted message as the answer.
 You can log into the DVWA using the credentials admin/password.
 
-'or 1=1--    (in DVWA SQL injection you will get user ID)
+'or 1=1#    (in DVWA SQL injection you will get user ID)
 
 google: sqli cheat sheet github = https://github.com/payloadbox/sql-injection-payload-list
 
@@ -1556,6 +1556,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
