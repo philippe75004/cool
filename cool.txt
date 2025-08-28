@@ -930,7 +930,7 @@ adb shell ls -lR | find "secret"
 
 Perform the vulnerability scan for the given IP address 192.168.39.99:
 nmap -sV 192.168.39.99 -oN nmapsV.txt
-nmap --script=vuln 192.168.39.99 -oN nmapScript.txt
+nmap --script vuln 192.168.39.99 -oN nmapScript.txt
 
 OpenVas & Nessus & OWASP
 --------------------------------------------------------------------------------------------------------------------------
@@ -1554,6 +1554,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
