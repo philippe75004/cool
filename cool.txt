@@ -121,6 +121,7 @@ smbclient -L //192.168.31.105 -k
 -----------------------------------------------------------------------------------------------------------
 -Identify attack category of the oldest CVEs that affects www.goodshoping.com:
 
+wapiti -u http://www.zobie.com   (Content Security Policy missing = XSS vulnerable)
 nmap --script vuln 192.168.10.101
 nmap --script vuln --script-args mincvss=6.5
 nmap -sV --script vulners 192.168.31.105
@@ -1554,6 +1555,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
