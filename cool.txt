@@ -1124,7 +1124,9 @@ ip.proto == 17 or type in filter = udp
 Check source ip (will be the attacker)
 -----------------------------------------------------------------------------------------------------------
 
-Determine the UDP based application layer protocol which attacker employed to flood the machine: 
+# Determine the UDP based application layer protocol which attacker employed to flood the machine: 
+
+Wireshark - Preferences → Name Resolution → Resolve transport names check (to resolve port # to name)
 Wireshark - Statistics - Conversations - UDP Tab
 Wireshark - Statistics - IPV4 Statistics - Source and IP Address
 Check destination port
@@ -1555,6 +1557,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
