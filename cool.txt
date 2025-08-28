@@ -172,7 +172,7 @@ orange1234
 -----------------------------------------------------------------------------------------------------------
 -Search in CWE list quick access on the 2023 CWE Top 25 most dangerous weakness ID of the last entry:
 https://cwe.mitre.org/ + https://cwe.mitre.org/top25/archive/2023/2023_top25_list.html
-
+*ID lookup top right to search by Weakness ID
 *list and find the top weakness in the list “Weaknesses in the 2023 CWE Top 25 Most Dangerous Software Weakness.
 -Identify name of Weakness ID: 276
 Incorrect Default Permissions
@@ -1548,6 +1548,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
