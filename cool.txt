@@ -501,7 +501,8 @@ xp_cmdshell type c:\inetpub\wwwroot\issstart.htm
 
 nmap -A -p 389 192.168.10.0/24 --open  (if can't find a dc try another subnet from above questions)
 nmap -A -p 389 192.168.0.0/24 --open 
-nmap -A -p 389 192.168.0.0/24 --open 
+nmap -A -p 88 192.168.0.0/24 --open
+nmap -A -p 389 172.30.10.0/24 --open 
 
 find / -name GetNPUsers.py
 (you will see where to execute it from for example)
@@ -1548,6 +1549,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
