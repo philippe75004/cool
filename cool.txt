@@ -1564,6 +1564,8 @@ crack hashes:
 https://hashes.com - https://hashes.com/en/decrypt/hash - https://crackstation.net/
 john or hashcat if wordlist given otherwise above
 
+hashcat -m 0 -a 0 hashmd5.txt /home/attacker/rockyou.txt  ( -m 0 = MD5 mode -a 0 = dictionary attack)
+john --format=raw-md5 --wordlist=/home/attacker/rockyou.txt hashmd5.txt
 -----------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -1620,6 +1622,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
