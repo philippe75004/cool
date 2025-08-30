@@ -1250,17 +1250,6 @@ Enter the password used to encrypt the volume.
 If a keyfile was used, click on "Keyfiles", browse to the location of the keyfile, and select it.
 Click OK: If the password and keyfile (if applicable) are correct, VeraCrypt will mount the volume and assign it to a drive letter.
 
-Access the Decrypted Volume
-Once the volume is successfully mounted, you can access it like any other drive or partition on your system. 
-Open File Explorer (Windows) or the file manager (Linux/macOS)
-
-Dismount the Volume
-When you're done, make sure to dismount the volume from VeraCrypt to securely unmount the encrypted container:
-
-In VeraCrypt, select the mounted volume and click "Dismount"
-
-*If You Don’t Have the Password or Keyfile:
-Unfortunately, if you do not have the correct password or keyfile, it is not possible to decrypt the VeraCrypt volume
 -----------------------------------------------------------------------------------------------------------
 
 hash comparaison, which file is the original which one's are the tampered one's:
@@ -1640,6 +1629,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
