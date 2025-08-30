@@ -1363,7 +1363,7 @@ su -
 ls
 exit
 adb shell pm list packages -3 -f   (to list unoffcial apk installed)
-shell pm list packages -3 -f (from PhoneSploit-Pro adb shell integrated) 
+pm list packages -3 -f (from PhoneSploit-Pro adb shell integrated) 
 adb pull data/app/com.cxinventor.xxxxxxx==/base.apk .  (do download apk locally to analyze)
 crc32 base.apk
 53ac614c
@@ -1625,6 +1625,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
