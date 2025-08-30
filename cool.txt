@@ -415,30 +415,35 @@ OpenVAS's severity levels, such as Low, Medium, High, or Critical, assigned to e
 
 ---------------------------------------------------------------------------------------------------------------------
 -malware scanning via virustotal and what is the last 4 digits of file SHA-256 hash value:
-d282
+sha256sum malware.rar
+xxxxxxxd282
+---------------------------------------------------------------------------------------------------------------------
 
--Find entropy value of file Tornado.elf, use Cyberchef: via https://gchq.github.io/CyberChef/
-double click entropy and in Input drop the ELF file.
+-Find entropy value of file Tornado, use Cyberchef: and file Tornado to see if ELF file (linux executable)
+via https://gchq.github.io/CyberChef/ double click entropy and in Input drop the ELF file.
 2.87 (value up to 2 decimals)
+
+OR
+apt install ent
+ent Tornado
 
 Otherwise DIE on windows:
 click on the right Advanced  then Entropy icon will appears in the middle
 
-or
-Otherwise entropyscan: 
-sudo git clone https://github.com/sandflysecurity/sandfly-entropyscan.git
-cd sandfly-entropyscan
-Go into the repo directory and build it:
-sudo go build
-Run the binary with your options:
-./sandfly-entropyscan -file /tmp/Tornado.elf (result -1 compare to cyberchef result)
-
 ---------------------------------------------------------------------------------------------------------------------
-last 4 digits of SHA 384 hash of the file with highest entropy value:
 An insider attack has been identified in one of the employees mobile device in
 192.168.0.0/24 subnet. You are assigned to covertly access the users device and obtain
 malicious elf files stored in a folder "Scan". Perform deep scan on the elf files and obtain
-the last 4 digits of SHA 384 hash of the file with highest entropy value. (Cyberchef for Entropy)
+the last 4 digits of SHA 384 hash of the file with highest entropy value. (Cyberchef for Entropy and or ent cmd linux)
+
+apt install ent
+ent Tornado1.elf =2.56
+ent Tornado2.elf = 2.75
+ent Tornado3.elf = 2.89  (highest entropy)
+
+sha384sum Tornado3.elf
+
+OR
 
 find /mnt/scan -type f -exec file {} + | grep ELF | awk -F: '{print $1}'
 *Once ELF file found
@@ -479,12 +484,13 @@ print("Last 4 digits of SHA-384 hash:", sha384_last4(max_entropy_file))
 
 *Now run the script: python3 entropy_scan.py
 
-Viewing and Analyzing ELF Files:
+#Viewing and Analyzing ELF Files:
 
 file example.elf
 strings example.elf
 readelf -a example.elf
 objdump -d example.elf
+ent example.elf
 
 -----------------------------------------------------------------------------------------------------------
 -Misconfgured SQL server vulnerability on DC of client under target domain controller :
@@ -1625,6 +1631,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
