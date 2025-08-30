@@ -1040,6 +1040,8 @@ find / -type f -perm -4000 2>/dev/null
 -Perform a vulnerability scan for the host with IP address 172.20.0.16:
 What is the severity score of a vulnerability the indicates the End of Life of a web development language platform?
 
+start openvas - scan
+
 -----------------------------------------------------------------------------------------------------------
 -Determine the UDP based application layer protocol the attacker use to flood the server via Wireshark:
 (check target destination port = 80)
@@ -1631,6 +1633,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
