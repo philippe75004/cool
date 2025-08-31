@@ -1585,8 +1585,14 @@ john or hashcat if wordlist given otherwise above
 hashcat -m 0 -a 0 hashmd5.txt /home/attacker/rockyou.txt  ( -m 0 = MD5 mode -a 0 = dictionary attack)
 john --format=raw-md5 --wordlist=/home/attacker/rockyou.txt hashmd5.txt
 -----------------------------------------------------------------------------------------------------------------------------------------
+#Amazon bucket:
+aws configure
+aws s3 ls s3://certifiedhacker02 or (https to view content)
+https://certifiedhacker02.s3.amazonaws.com 
+aws s3 mv Hack.txt s3://certifiedhacker02
+aws s3 cp s3://certifiedhacker02/flag.txt flagdownload.txt
 
-
+-----------------------------------------------------------------------------------------------------------------------------------------
 Malware detection and analysis sites:
 
 https://www.virustotal.com/
@@ -1640,31 +1646,3 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
