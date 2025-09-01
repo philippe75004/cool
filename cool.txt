@@ -1509,6 +1509,7 @@ lsof -p pid
 
 -Identify the algorithm used for file encryption and hidden text cryt-128-06encr.hex containing ransom file password:
 Twofish/@!ph@|tE*t
+
 copy cryt-128-06encr.hex from PArrot to Windows and use cryp tool to Identify the algorithm used
 Twofish = 128 bites block size for the key
 -CT1 Algorithm ID Mapping (commonly used table) Based on CT1 documentation & export format:
@@ -1527,7 +1528,9 @@ cryp tool when save will add  below:
 -If the key is not given, GUESS based on name of the algorithms 06 → Twofish and it's 128 bites block size for the key (32 characters)
 06 06 06 06 06 06 06 06 06 06 06 06 06 06 06 06
 
--same if RC4 guess the key 05 05 05....
+-same if RC4 guess the key 05 05 05....or to find encryption:
+
+Click on cryp tool - Analysis - Symetric Encryption (modern) - RC4 - Key lengh: 8 to 16 bits - Start - result could be the secret...
 
 ----------------------------------------------------------------------------------------------------------------------------
 -TO Decrypt OPEN VeraCrypt click Volume - select file (im my docs) select drive M: and click MOUNT - AND PUT THE password given
@@ -1714,6 +1717,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
