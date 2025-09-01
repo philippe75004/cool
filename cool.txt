@@ -758,7 +758,7 @@ google: sqli cheat sheet github = https://github.com/payloadbox/sql-injection-pa
 nmap -A -p 22,8080 172.30.10.0/24 --open  (last HOP = ip not first Hop 1 IP)
 (find Apache Tomcat / Coyote JSP = log4J vunlerable)
 http://172.30.10.99:8080
-whatweb http://172.30.10.99:8080
+whatweb http://172.30.10.99:8080 (will show Java + JSESSIONID so log4j probably)
 
 "replace jdk version to match the one required": read README file...show nc port....
 cd /home/attacker/log4j-shell-poc
@@ -1703,6 +1703,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
