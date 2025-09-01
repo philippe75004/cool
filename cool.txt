@@ -758,6 +758,7 @@ google: sqli cheat sheet github = https://github.com/payloadbox/sql-injection-pa
 nmap -A -p 22,8080 172.30.10.0/24 --open  (last HOP = ip not first Hop 1 IP)
 (find Apache Tomcat / Coyote JSP = log4J vunlerable)
 http://172.30.10.99:8080
+whatweb http://172.30.10.99:8080
 
 "replace jdk version to match the one required": read README file...show nc port....
 cd /home/attacker/log4j-shell-poc
@@ -837,7 +838,6 @@ net view /domain
 smbclient -L //192.168.1.X -U guest
 
 -------------------------------------------------------------------------------------------------------
-
 -Identify the type of encoding or encryption used on a file + find type of HASH:
 
 hashid hidden_text.txt
@@ -867,8 +867,7 @@ exiftool Image.jpg
 sgpt --shell "Use steghide to extract hidden text in photo.jpg image file"
 
 -------------------------------------------------------------------------------------------------------
-
-#openstego for images encrypt + decrypt (gui for images hidding message)
+#openstego gui windows decrypt (images with hidding message)
 #Decode ciphers: ceasar ciphers ....
 https://rot13.com/ 
 echo "CVPLKDSAsdsd{P7E15asdasdas}" | tr 'A-Za-z' 'N-ZA-Mn-za-m'  ()
@@ -877,7 +876,6 @@ https://10015.io/tools/base64-encoder-decoder
 https://10015.io/tools/url-encoder-decoder
 
 -------------------------------------------------------------------------------------------------------
-
 #BCTEXTENCODER for encryption & decryption
 -BcTextEncoder: For encoding / decoding text in file .hex
 Put in Encode the key then click on Decode and put the pwd given
@@ -890,7 +888,6 @@ echo cGlJ0taxxxxxx | Base64 -d (decode base64)
 xxd -r -p yourfile.hex
 
 -------------------------------------------------------------------------------------------------------
-
 -Access an encrypted file and decode the encrypted file to retrieve the flag:
 Identify the Encryption Type Before you can decode the file, Common encryption types include
 
@@ -1706,6 +1703,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
