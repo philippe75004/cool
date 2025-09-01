@@ -1027,6 +1027,11 @@ cd sdcard
 ls
 cd Download
 exit
+
+find /sdcard/ -name "*.png"  (screenshot)
+find /sdcard/ -name "*.txt"
+find /sdcard/ -name "*.jpeg"
+
 adb pull /sdcard/Download /home/attacker (will download all files in Download and will copy folder to /home/attacker/Download
 *copy it via smb://172.25.0.11 by browsing first so it's mounted & decode it via BcTextEncoder on windows
 (ryptD3(0d3
@@ -1701,6 +1706,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
