@@ -589,6 +589,7 @@ content of the imroot.txt file as the answer.
 
 sudo misconfigurations
 sudo /bin/bash
+sudo -u user2 /bin/bash
 sudo -l
 su -
 sudo su
@@ -1720,6 +1721,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
