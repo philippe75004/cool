@@ -441,6 +441,13 @@ After the scan completes, go to the Results section and filter for vulnerabiliti
 CVE (Common Vulnerabilities and Exposures) related to RPC misconfigurations.
 OpenVAS's severity levels, such as Low, Medium, High, or Critical, assigned to each vulnerability.
 
+#Nessus install:
+dpkg -i Nessus-10.8.3-ubuntu1604_amd64.deb
+systemctl status nessusd
+systemctl start nessusd.service
+https://machineip:8834
+
+
 ---------------------------------------------------------------------------------------------------------------------
 -malware scanning via virustotal and what is the last 4 digits of file SHA-256 hash value:
 sha256sum malware.rar
@@ -1721,6 +1728,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
