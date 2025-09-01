@@ -1450,7 +1450,7 @@ dump_sms
 app_list
 sysinfo
 --------------------------------------------------------------------------------------------------------------------------------------
--njRAT on windows default port 5553
+-njRAT on windows default port 5553 sometime 5552
 nmap -p 5553 --open 192.168.10.0/24
 nmap -p- --open 192.168.10.0/24
 if does not work njrat change default port 5553 to the one found above
@@ -1714,6 +1714,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
