@@ -1578,11 +1578,16 @@ cp exploit1.exe exploit2.exe exploit3.exe /var/www/html/share/
 service apache2 start  (then (other pc http://x.x.x.x/share)
 
 -----------------------------------------------------------------------------------------------------------------------------------------
-# find CMS type, version: https://cheatsheet.haax.fr/web-pentest/content-management-system-cms/drupal/
+# find CMS type, version, exploit: https://cheatsheet.haax.fr/web-pentest/content-management-system-cms/drupal/
+
+
+whatweb http://192.168.0.222:8080
+whatweb http://192.168.0.222:8080/CEH
+whatweb http://192.168.0.222:8080/DVWA
 
 cmsmap http://192.168.0.222 (Wordpress + Joomla + Drupal)
-
 cmsmap http://192.168.0.222:8080/CEH/wp-login
+
 http://192.168.0.222:8080/CEH/wp-json/wp/v2/users
 http://192.168.0.222:8080/CEH/wp-json/wp/v2/users/1
 http://192.168.0.222:8080/CEH/wp-json/wp/v2/users/2 (if 401 exist and if 404 does not exist)
@@ -1696,5 +1701,6 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
