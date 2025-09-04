@@ -207,6 +207,8 @@ select * from wp_users;
 
 *You can also check http://192.168.0.222:8080/phpmyadmin/index.php
 -----------------------------------------------------------------------------------------------------------
+# MySQL cmd, attack...
+
 mysql -u root -p password (localand remote below)
 mysql -u root -h docker.hackthebox.eu -P 3306 -p
 Enter pwd..
@@ -403,7 +405,6 @@ mysql> SELECT 1 = 1 AND 'test' = 'test';
 | 1 = 1 AND 'test' = 'test' |
 +---------------------------+
 |                         1 |
-+---------------------------+
 
 mysql> SELECT 1 = 1 AND 'test' = 'abc';
 
@@ -411,7 +412,6 @@ mysql> SELECT 1 = 1 AND 'test' = 'abc';
 | 1 = 1 AND 'test' = 'abc' |
 +--------------------------+
 |                        0 |
-+--------------------------+
 
 *The OR operator takes in two expressions as well, and returns true when at least one of them evaluates to true:
 
@@ -421,7 +421,6 @@ mysql> SELECT 1 = 1 OR 'test' = 'abc';
 | 1 = 1 OR 'test' = 'abc' |
 +-------------------------+
 |                       1 |
-+-------------------------+
 
 mysql> SELECT 1 = 2 OR 'test' = 'abc';
 
@@ -429,7 +428,6 @@ mysql> SELECT 1 = 2 OR 'test' = 'abc';
 | 1 = 2 OR 'test' = 'abc' |
 +-------------------------+
 |                       0 |
-+-------------------------+
 
 *The NOT operator simply toggles a boolean value 'i.e. true is converted to false and vice versa':
 
@@ -439,7 +437,6 @@ mysql> SELECT NOT 1 = 1;
 | NOT 1 = 1 |
 +-----------+
 |         0 |
-+-----------+
 
 mysql> SELECT NOT 1 = 2;
 
@@ -480,6 +477,267 @@ MariaDB [employees]> show tables;
 MariaDB [employees]> select * from titles;
 MariaDB [employees]> SELECT * FROM titles WHERE emp_no > 1000 AND titles <> 'engineer';
 MariaDB [employees]> SELECT * FROM titles WHERE emp_no > 1000 AND titles != 'engineer';
+
+#MySQL webapp connection / interaction:
+
+Code: php
+$conn = new mysqli("localhost", "root", "password", "users");
+$query = "select * from logins";
+$result = $conn->query($query);
+
+*Then, the query's output will be stored in $result, and we can print it to the page or use it in any other way.
+The below PHP code will print all returned results of the SQL query in new lines:
+
+Code: php
+while($row = $result->fetch_assoc() ){
+	echo $row["name"]."<br>";
+}
+
+*Web applications also usually use user-input when retrieving data. For example, when a user uses the search function to search for other
+users, their search input is passed to the web application, which uses the input to search within the databases:
+
+Code: php
+$searchInput =  $_POST['findUser'];
+$query = "select * from logins where username like '%$searchInput'";
+$result = $conn->query($query);
+
+*If we use user-input within an SQL query, and if not securely coded, it cause a variety of issues, like SQL Injection vulnerabilities.
+
+Sanitization refers to the removal of any special characters in user-input, in order to break any injection attempts.
+
+-What is an Injection?
+*In the above example, we accept user input and pass it directly to the SQL query without sanitization.
+
+Injection occurs when an application misinterprets user input as actual code rather than a string, changing the code flow and executing it
+This can occur by escaping user-input bounds by injecting a special character like ('), and then writing code to be executed, 
+like JavaScript code or SQL in SQL Injections. Unless the user input is sanitized, it is likely to execute the injected code and run it.
+
+-SQL Injection
+*An SQL injection occurs when user-input is inputted into the SQL query string without properly sanitizing or filtering the input. 
+The previous example showed how user-input can be used within an SQL query, and it did not use any form of input sanitization:
+
+Code: php
+$searchInput =  $_POST['findUser'];
+$query = "select * from logins where username like '%$searchInput'";
+$result = $conn->query($query);
+
+In typical cases, the searchInput would be inputted to complete the query, returning the expected outcome. 
+Any input we type goes into the following SQL query:
+
+Code: sql
+select * from logins where username like '%$searchInput'
+
+So, if we input admin, it becomes '%admin'. In this case, if we write any SQL code, it would just be considered as a search term. 
+For example, if we input SHOW DATABASES;, it would be executed as '%SHOW DATABASES;' The web application will search for usernames 
+similar to SHOW DATABASES;. However, as there is no sanitization, in this case, we can add a single quote ('), 
+which will end the user-input field, and after it, we can write actual SQL code. For example, if we search for 1'; DROP TABLE users;, the search input would be:
+
+Code: php
+'%1'; DROP TABLE users;'
+
+*Notice how we added a single quote (') after "1", in order to escape the bounds of the user-input in ('%$searchInput').
+
+So, the final SQL query executed would be as follows:
+
+Code: sql
+select * from logins where username like '%1'; DROP TABLE users;'
+
+As we can see from the syntax highlighting, we can escape the original query's bounds and have our newly injected query execute as well. Once the query is run, the users table will get deleted.
+
+Note: In the above example, for the sake of simplicity, we added another SQL query after a semi-colon (;). 
+Though this is actually not possible with MySQL, it is possible with MSSQL and PostgreSQL
+In the coming sections, we'll discuss the real methods of injecting SQL queries in MySQL.
+
+*Syntax Errors
+The previous example of SQL injection would return an error:
+
+Code: php
+Error: near line 1: near "'": syntax error
+
+This is because of the last trailing character, where we have a single extra quote (') that is not closed, which causes a SQL syntax error when executed:
+
+Code: sql
+select * from logins where username like '%1'; DROP TABLE users;'
+
+In this case, we had only one trailing character, as our input from the search query was near the end of the SQL query. However, 
+the user input usually goes in the middle of the SQL query, and the rest of the original SQL query comes after it.
+
+To have a successful injection, we must ensure that the newly modified SQL query is still valid and does not have any syntax errors after 
+our injection. In most cases, we would not have access to the source code to find the original SQL query and develop a proper SQL injection 
+to make a valid SQL query. So, how would we be able to inject into the SQL query then successfully?
+
+One answer is by using comments, and we will discuss this in a later section. Another is to make the query syntax work by passing 
+in multiple single quotes, as we will discuss next (').
+
+In simple cases, the output of both the intended and the new query may be printed directly on the front end, and we can directly read it.
+This is known as In-band SQL injection, and it has two types: Union Based and Error Based.
+
+With Union Based SQL injection, we may have to specify the exact location, 'i.e., column', which we can read, so the query 
+will direct the output to be printed there. As for Error Based SQL injection, it is used when we can get the PHP or SQL errors 
+in the front-end, and so we may intentionally cause an SQL error that returns the output of our query.
+
+In more complicated cases, we may not get the output printed, so we may utilize SQL logic to retrieve the output character by character. 
+This is known as Blind SQL injection, and it also has two types: Boolean Based and Time Based.
+
+With Boolean Based SQL injection, we can use SQL conditional statements to control whether the page returns any output at all, 
+'i.e., original query response,' if our conditional statement returns true. As for Time Based SQL injections, 
+we use SQL conditional statements that delay the page response if the conditional statement returns true using the Sleep() function.
+
+Finally, in some cases, we may not have direct access to the output whatsoever, so we may have to direct the output to a remote location, 
+'i.e., DNS record,' and then attempt to retrieve it from there. This is known as Out-of-band SQL injection.
+
+In this module, we will only be focusing on introducing SQL injections through learning about Union Based SQL injection.
+
+-Authentification Bypass Example: Web page login / password
+
+Code: sql
+SELECT * FROM logins WHERE username='admin' AND password = 'p@ssw0rd';
+
+The page takes in the credentials, then uses the AND operator to select records matching the given username and password. 
+If the MySQL db returns matched records, the credentials are valid, so the PHP code would evaluate the login attempt condition as true. 
+If the condition evaluates to true, the admin record is returned, and our login is validated. 
+Let us see what happens when we enter incorrect credentials.
+
+*As expected, the login failed due to the wrong password leading to a false result from the AND operation.
+
+SQLi Discovery
+Before we start subverting the web application's logic and attempting to bypass the authentication, we first have to test 
+whether the login form is vulnerable to SQL injection. To do that, we will try to add one of the below payloads after our username 
+and see if it causes any errors or changes how the page behaves:
+
+Payload	URL Encoded
+'	%27
+"	%22
+#	%23
+;	%3B
+)	%29
+
+Note: In some cases, we may have to use the URL encoded version of the payload. An example of this is when we put our payload directly 
+in the URL 'i.e. HTTP GET request'.
+
+*So, let us start by injecting a single quote:
+
+Code: sql
+SELECT * FROM logins WHERE username=''' AND password = 'something';
+
+*We see that a SQL error was thrown instead of the Login Failed message. The page threw an error because the resulting query above.
+
+As discussed in the previous section, the quote we entered resulted in an odd number of quotes, causing a syntax error. 
+One option would be to comment out the rest of the query and write the remainder of the query as part of our injection 
+to form a working query. Another option is to use an even number of quotes within our injected query, 
+such that the final query would still work.
+
+*OR Injection:
+
+We would need the query always to return true, regardless of the username and password entered, to bypass the authentication. 
+To do this, we can abuse the OR operator in our SQL injection.
+
+ for operation precedence states that the AND operator would be evaluated before the OR operator. This means that if there is at least one
+TRUE condition in the entire query along with an OR operator, the entire query will evaluate to TRUE since the OR operator returns TRUE 
+if one of its operands is TRUE.
+
+An example of a condition that will always return true is '1'='1'. but, to keep the SQL query working and keep an even number of quotes, 
+instead of using ('1'='1'), we will remove the last quote and use ('1'='1), so the remaining single quote from the original query 
+would be in its place.
+
+So, if we inject the below condition and have an OR operator between it and the original condition, it should always return true:
+
+Code: sql
+admin' or '1'='1
+
+The final query should be as follow:
+
+Code: sql
+SELECT * FROM logins WHERE username='admin' or '1'='1' AND password = 'something';
+
+This means the following:
+
+If username is admin
+OR
+If 1=1 return true 'which always returns true'
+AND
+If password is something
+
+*The AND operator will be evaluated first, and it will return false. Then, the OR operator would be evaluated, and if either 
+of the statements is true, it would return true. Since 1=1 always returns true, this query will return true, and it will grant us access.
+
+Note: The payload we used above is one of many auth bypass payloads we can use to subvert the authentication logic. 
+You can find a comprehensive list of SQLi auth bypass payloads in PayloadAllTheThings, each of which works on a certain type of SQL queries.
+
+https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection#authentication-bypass
+
+*Auth Bypass with OR operator
+
+Let us try this as the username and see the response.
+
+SELECT * FROM logins WHERE username='admin' or '1'='1' AND password = 'something';
+
+We were able to log in successfully as admin. However, what if we did not know a valid username? 
+Let us try the same request with a different username this time.
+
+SELECT * FROM logins WHERE username='NotAdmin' or '1'='1' AND password = 'something';
+
+*The login failed because notAdmin does not exist in the table and resulted in a false query overall.
+
+To successfully log in once again, we will need an overall true query. This can be achieved by injecting an OR condition into the password
+field, so it will always return true. Let us try something' or '1'='1 as the password.
+
+SELECT * FROM logins WHERE username='NotAdmin' or '1'='1' AND password = 'something' or '1'='1';
+
+The additional OR condition resulted in a true query overall, as the WHERE clause returns everything in the table, and the user present 
+in the first row is logged in. In this case, as both conditions will return true, we do not have to provide a test username and password 
+and can directly start with the ' injection and log in with just ' or '1' = '1.
+
+SELECT * FROM logins WHERE username=" or '1'='1' AND password = " or '1'='1';
+
+*This works since the query evaluate to true irrespective of the username or password.
+
+-Try to log in as the user 'tom'. What is the flag value shown after you successfully log in?
+
+login = tom' or '1'='1
+password = nothing only in login
+
+tom')-- -
+
+*Using Comments
+
+How to use comments to subvert the logic of more advanced SQL queries and end up with a working SQL query to bypass the login 
+authentication process.
+
+Comments
+Just like any other language, SQL allows the use of comments as well. Comments are used to document queries or ignore a certain part 
+of the query. We can use two types of line comments with MySQL -- and #, in addition to an in-line comment /**/ 
+(though this is not usually used in SQL injections). The -- can be used as follows:
+
+mysql> SELECT username FROM logins; -- Selects usernames from the logins table 
+
++---------------+
+| username      |
++---------------+
+| admin         |
+| administrator |
+| john          |
+| tom      
+
+Note: In SQL, using two dashes only is not enough to start a comment. So, there has to be an empty space after them, 
+so the comment starts with (-- ), with a space at the end. This is sometimes URL encoded as (--+), 
+as spaces in URLs are encoded as (+). To make it clear, we will add another (-) at the end (-- -), to show the use of a space character.
+
+The # symbol can be used as well.
+
+mysql> SELECT * FROM logins WHERE username = 'admin'; # You can place anything here AND password = 'something'
+
++----+----------+----------+---------------------+
+| id | username | password | date_of_joining     |
++----+----------+----------+---------------------+
+|  1 | admin    | p@ssw0rd | 2020-07-02 00:00:00
+
+Tip: if you are inputting your payload in the URL within a browser, a (#) symbol is usually considered as a tag, 
+and will not be passed as part of the URL.
+In order to use (#) as a comment within a browser, we can use '%23', which is an URL encoded (#) symbol.
+
+*The server will ignore the part of the query with AND password = 'something' during evaluation.
+
 
 -----------------------------------------------------------------------------------------------------------
 -Search in CWE list quick access on the 2023 CWE Top 25 most dangerous weakness ID of the last entry:
@@ -2003,6 +2261,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
